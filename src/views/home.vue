@@ -185,7 +185,6 @@ function notifySchedule() {
 
     <RoleDialog
       v-model="showRoleDialog"
-      :users="users"
       @submit="addRole"
     />
   </main>

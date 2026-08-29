@@ -1,14 +1,10 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import { ElMessage } from 'element-plus'
 import JobDialog from './JobDialog.vue'
 
 const props = defineProps({
   modelValue: Boolean,
-  users: {
-    type: Array,
-    default: () => []
-  }
 })
 
 const emit = defineEmits(['update:modelValue', 'submit'])
@@ -56,6 +52,24 @@ function handleJobSelect(subJob) {
   form.job = subJob.name
   form.jobImage = subJob.image
 }
+
+
+
+const users = ref([])
+const loadData = () => {
+  let params ={
+
+  }
+
+  window.$https("/dnf-api/getGroupInfo", "get", {}, 1, {}).then(res=>{
+    // 兼容两种返回格式
+    const data = res.data.data || res.data
+    users.value = data[0]?.groupList || []
+  })
+}
+onMounted(()=>{
+  loadData()
+})
 </script>
 
 <template>
@@ -74,13 +88,13 @@ function handleJobSelect(subJob) {
         <el-select v-model="form.ownerId" placeholder="从群成员中选择" filterable style="width: 100%">
           <el-option
             v-for="user in users"
-            :key="user.userName"
-            :label="user.displayName || user.nickName"
-            :value="user.userName"
+            :key="user.UserName"
+            :label="user.DisplayName || user.NickName"
+            :value="user.UserName"
           >
             <div style="display: flex; align-items: center; gap: 8px">
-              <el-avatar :size="24" :src="user.avatar" />
-              <span>{{ user.displayName || user.nickName }}</span>
+              <el-avatar :size="24" :src="user.SmallHeadImgUrl" />
+              <span>{{ user.DisplayName || user.NickName }}</span>
             </div>
           </el-option>
         </el-select>
