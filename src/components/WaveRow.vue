@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Edit, Delete } from '@element-plus/icons-vue'
+import { Edit, Delete, CircleCheck } from '@element-plus/icons-vue'
 import RoleAvatar from './RoleAvatar.vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 
@@ -21,14 +21,16 @@ const emit = defineEmits([
   'end-drag',
   'remove-role',
   'edit',
+  'save',
   'delete'
 ])
 
 const timeRemaining = computed(() => {
-  if (!props.wave.time) return null
+  if (!props.wave.time && !props.wave.date) return null
+  const targetTime = props.wave.time || props.wave.date
 
   const now = new Date()
-  const raidDate = new Date(props.wave.time.replace(/-/g, '/')) // 兼容性处理
+  const raidDate = new Date(targetTime.replace(/-/g, '/')) // 兼容性处理
 
   const diff = raidDate - now
   if (diff <= 0) return '🎉 正在开团中'
@@ -46,6 +48,13 @@ const timeRemaining = computed(() => {
   } else {
     return `还有 ${minutes} 分钟`
   }
+})
+
+const modeName = computed(() => {
+  const type = props.wave.type || props.wave.mode
+  if (type === 1 || type === '1') return '4人周本'
+  if (type === 2 || type === '2') return '12人团本'
+  return type || '未知模式'
 })
 
 const gridStyle = computed(() => {
@@ -86,25 +95,26 @@ const deleteRow = (row) => {
            <span class="emoji">🌊</span>
            <span class="wave-name text-gradient-primary">{{ wave.name }}</span>
            <el-tag size="small" effect="plain" class="wave-badge mode-badge">
-             <span class="emoji">👥</span> {{ wave.mode }}
+             <span class="emoji">👥</span> {{ modeName }}
            </el-tag>
-           <el-tag size="small" type="danger" effect="dark" class="wave-badge boss-badge" v-if="wave.boss">
-             <span class="emoji">👾</span> {{ wave.boss }}
+           <el-tag size="small" type="danger" effect="dark" class="wave-badge boss-badge" v-if="wave.bossName || wave.boss">
+             <span class="emoji">👾</span> {{ wave.bossName || wave.boss }}
            </el-tag>
         </div>
         <div class="meta-row">
           <span class="wave-meta">
-            <span class="emoji">🕒</span> {{ wave.time }}
+            <span class="emoji">🕒</span> {{ wave.time || wave.date }}
           </span>
-          <span class="wave-meta" v-if="wave.place">
-            <span class="emoji">📍</span> {{ wave.place }}
+          <span class="wave-meta" v-if="wave.place || wave.address">
+            <span class="emoji">📍</span> {{ wave.place || wave.address }}
           </span>
           <span class="countdown-hint" v-if="timeRemaining">{{ timeRemaining }}</span>
         </div>
       </div>
 
       <div class="wave-actions">
-        <button type="button" class="mini-btn delete" @click="deleteRow(wave)"><Delete /></button>
+        <button type="button" class="mini-btn save" title="保存编队" @click="$emit('save', wave)"><CircleCheck /></button>
+        <button type="button" class="mini-btn delete" title="删除波次" @click="deleteRow(wave)"><Delete /></button>
       </div>
     </div>
 
@@ -256,6 +266,7 @@ const deleteRow = (row) => {
 
 .mini-btn svg { width: 20px; height: 20px; }
 .mini-btn:hover { background: var(--primary-color); color: #fff; transform: scale(1.1); }
+.mini-btn.save:hover { background: #52c41a; }
 .mini-btn.delete:hover { background: #ff4d4f; }
 
 .teams-grid {

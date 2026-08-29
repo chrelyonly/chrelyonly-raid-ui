@@ -1,5 +1,8 @@
 <script setup>
-defineProps({
+import { Delete } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
+
+const props = defineProps({
   role: {
     type: Object,
     required: true
@@ -7,8 +10,14 @@ defineProps({
   size: {
     type: String,
     default: 'medium' // 'small' | 'medium'
+  },
+  showDelete: {
+    type: Boolean,
+    default: false
   }
 })
+
+const emit = defineEmits(['delete'])
 
 function getRoleTagType(type) {
   const map = {
@@ -32,6 +41,22 @@ function getRoleTypeName(type) {
   if (type == 1 || type == 2 || type == 4) return '输出'
   if (type == 3) return '辅助'
   return type
+}
+
+function handleDelete() {
+  ElMessageBox.confirm(
+    `确定要永久删除角色「${props.role.name}」吗？`,
+    '风险操作确认',
+    {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '手滑了',
+      type: 'warning',
+      buttonSize: 'default',
+      confirmButtonClass: 'el-button--danger'
+    }
+  ).then(() => {
+    emit('delete')
+  }).catch(() => {})
 }
 </script>
 
@@ -64,6 +89,9 @@ function getRoleTypeName(type) {
 
          </small>
       </div>
+    </div>
+    <div v-if="showDelete" class="delete-action" @click.stop="handleDelete">
+      <el-icon class="delete-btn-icon"><Delete /></el-icon>
     </div>
   </div>
 </template>
@@ -174,5 +202,29 @@ function getRoleTypeName(type) {
 
 .small .role-info {
   gap: 0;
+}
+
+.delete-action {
+  padding: 8px;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.2s;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-avatar-wrapper:hover .delete-action {
+  opacity: 1;
+}
+
+.delete-action:hover {
+  color: #ff4d4f;
+  transform: scale(1.2);
+}
+
+.delete-btn-icon {
+  font-size: 18px;
 }
 </style>

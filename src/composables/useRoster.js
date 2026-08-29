@@ -85,22 +85,37 @@ export function useRoster() {
     })
   })
 
+  const waves = ref([])
+
+  const loadWaves = async () => {
+    try {
+      const res = await window.$https("/dnf-api/getDnfRaid", "get", {}, 1, {})
+      const data = res.data.data || res.data
+      if (data && Array.isArray(data)) {
+        waves.value = data.map(item => {
+          // 优先尝试从 userList 解析编队信息，如果为空则尝试 teams
+          const teamsStr = item.userList || item.teams
+          const teams = typeof teamsStr === 'string' ? JSON.parse(teamsStr) : teamsStr
+          return {
+            ...item,
+            // 统一字段名，兼容旧代码和后端字段
+            mode: (item.type === 1 || item.type === '1') ? '4人周本' :
+                  (item.type === 2 || item.type === '2') ? '12人团本' : (item.mode || '未知模式'),
+            time: item.time || item.date,
+            boss: item.boss || item.bossName,
+            place: item.place || item.address,
+            teams: teams || [{ id: Date.now() + '-1', name: '红队', members: [null, null, null, null] }]
+          }
+        })
+      }
+    } catch (e) {
+      console.error('Failed to load raid data', e)
+    }
+  }
+
   // 初始化加载
   loadData()
-
-  const waves = ref([
-    {
-      id: 1,
-      name: '第 1 波',
-      mode: '4人周本',
-      time: '20:00',
-      boss: '雾神·雨',
-      place: '雾神尼',
-      teams: [
-        { id: '1-1', name: '红队', members: [null, null, null, null] }
-      ]
-    }
-  ])
+  loadWaves()
 
   const roleMap = computed(() => new Map(roles.value.map(role => [role.id, role])))
 
@@ -173,11 +188,28 @@ export function useRoster() {
 
 
   const addWave = async (waveData) => {
-    const res = await window.$https("/dnf-api/addDnfRaid", "post", waveData, 2, {})
-    const newRole = res.data.data || res.data
-    ElMessage.success('🎉 攻坚队创建成功')
+    try {
+      await window.$https("/dnf-api/addDnfRaid", "post", waveData, 2, {})
+      ElMessage.success('🎉 攻坚队创建成功')
+      await loadWaves()
+    } catch (e) {
+      ElMessage.error('创建失败')
+    }
   }
 
+
+  const saveWaveTeams = async (wave) => {
+    try {
+      const submitData = {
+        ...wave,
+        userList: JSON.stringify(wave.teams)
+      }
+      await window.$https("/dnf-api/addDnfRaid", "post", submitData, 2, {})
+      ElMessage.success(`💾 ${wave.name} 编队保存成功`)
+    } catch (e) {
+      ElMessage.error('保存失败')
+    }
+  }
 
   const addRole = async (roleData) => {
     try {
@@ -203,6 +235,16 @@ export function useRoster() {
     }
   }
 
+  const delRole = async (role) => {
+    try {
+      await window.$https("/dnf-api/delRole", "post", role, 2, {})
+      ElMessage.success(`✅ 角色「${role.name}」已从数据库移除`)
+      await loadData()
+    } catch (e) {
+      ElMessage.error('删除角色失败')
+    }
+  }
+
   return {
     roles,
     users,
@@ -213,7 +255,12 @@ export function useRoster() {
     removeRoleFromAllWaves,
     autoAssignRole,
     addWave,
+    saveWaveTeams,
     addRole,
-    refreshData: loadData
+    delRole,
+    refreshData: async () => {
+      await loadData()
+      await loadWaves()
+    }
   }
 }

@@ -20,7 +20,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 const form = ref({
-  type: '4人周本',
+  type: 1, // 1: 4人周本, 2: 12人团本
   date: '',
   bossName: '米歇尔',
   name: '干翻米歇尔',
@@ -33,7 +33,7 @@ watch(
   (val) => {
     if (val && Object.keys(val).length > 0) {
       form.value = {
-        type: val.type || '4人周本',
+        type: Number(val.type) || 1,
         date: val.date || '',
         bossName: val.bossName || '米歇尔',
         name: val.name || '干翻米歇尔',
@@ -50,7 +50,7 @@ watch(
 function resetForm() {
   form.value = {
     name: '干翻米歇尔',
-    type: '4人周本',
+    type: 1,
     date: '',
     bossName: '米歇尔',
     masterName: '小黑子',
@@ -116,8 +116,8 @@ const disabledDate = (time) => {
       </el-form-item>
       <el-form-item label="副本模式">
         <el-radio-group v-model="form.type">
-          <el-radio-button label="4人周本" value="4人周本" />
-          <el-radio-button label="12人团本" value="12人团本" />
+          <el-radio-button :label="1">4人周本</el-radio-button>
+          <el-radio-button :label="2">12人团本</el-radio-button>
         </el-radio-group>
       </el-form-item>
 

@@ -14,7 +14,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['start-drag', 'end-drag', 'add-role', 'role-click', 'refresh'])
+const emit = defineEmits(['start-drag', 'end-drag', 'add-role', 'role-click', 'delete-role', 'refresh'])
 
 const filterText = ref('')
 const treeRef = ref(null)
@@ -47,6 +47,10 @@ function onDragStart(role) {
 
 function onRoleClick(role) {
   emit('role-click', role.id)
+}
+
+function onDeleteRole(role) {
+  emit('delete-role', role)
 }
 </script>
 
@@ -110,7 +114,12 @@ function onRoleClick(role) {
             @dragend="$emit('end-drag')"
             @click="onRoleClick(data.role)"
           >
-            <RoleAvatar :role="data.role" size="small" />
+            <RoleAvatar
+              :role="data.role"
+              size="small"
+              show-delete
+              @delete="onDeleteRole(data.role)"
+            />
           </div>
 
           <!-- 用户节点 -->

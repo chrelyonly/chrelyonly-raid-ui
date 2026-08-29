@@ -28,7 +28,9 @@ const {
   removeRoleFromAllWaves,
   autoAssignRole,
   addWave,
+  saveWaveTeams,
   addRole,
+  delRole,
   refreshData
 } = useRoster()
 
@@ -143,6 +145,7 @@ function notifySchedule() {
               @end-drag="endDrag"
               @remove-role="removeRoleFromWave"
               @edit="openEditDialog"
+              @save="saveWaveTeams"
             />
           </div>
 
@@ -161,6 +164,7 @@ function notifySchedule() {
           @end-drag="endDrag"
           @add-role="showRoleDialog = true"
           @role-click="autoAssignRole"
+          @delete-role="delRole"
           @refresh="refreshData"
         />
       </div>
