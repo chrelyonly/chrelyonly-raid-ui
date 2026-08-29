@@ -13,11 +13,14 @@ import request from '@/axios/axiosConfig.js';
 // 饿了么
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     elementApp.component(key, component)
 }
-elementApp.use(ElementPlus)
+elementApp.use(ElementPlus, {
+  locale: zhCn,
+})
 // AVUE
 import Avue,{findObject} from '@smallwei/avue';
 import '@smallwei/avue/lib/index.css';

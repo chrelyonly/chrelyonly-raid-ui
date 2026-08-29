@@ -14,7 +14,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['start-drag', 'end-drag', 'add-role'])
+const emit = defineEmits(['start-drag', 'end-drag', 'add-role', 'role-click'])
 
 const filterText = ref('')
 const treeRef = ref(null)
@@ -34,6 +34,10 @@ const totalRoles = computed(() => {
 
 function onDragStart(role) {
   emit('start-drag', role)
+}
+
+function onRoleClick(role) {
+  emit('role-click', role.id)
 }
 </script>
 
@@ -69,12 +73,13 @@ function onDragStart(role) {
             v-if="data.role"
             class="role-card"
             :class="{
-              'is-c': data.role.type == 1,
-              'is-support': data.role.type == 2
+              'is-c': data.role.type == 1 || data.role.type == 2 || data.role.type == 4,
+              'is-support': data.role.type == 3
             }"
             draggable="true"
             @dragstart="onDragStart(data.role)"
             @dragend="$emit('end-drag')"
+            @click="onRoleClick(data.role)"
           >
             <RoleAvatar :role="data.role" size="small" />
           </div>

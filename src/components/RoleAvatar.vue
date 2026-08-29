@@ -12,38 +12,58 @@ defineProps({
 
 function getRoleTagType(type) {
   const map = {
-    辅助: 'success',
-    2: 'success',
-    大C: 'danger',
+    '辅助': 'success',
+    '3': 'success',
+    3: 'success',
+    '大C': 'danger',
+    '1': 'danger',
     1: 'danger',
-    小C: 'warning',
-    混子: 'info',
+    '小C': 'warning',
+    '2': 'warning',
+    2: 'warning',
+    '混子': 'info',
+    '4': 'info',
+    4: 'info'
   }
   return map[type] || 'info'
 }
 
 function getRoleTypeName(type) {
-  if (type === 1) return '输出'
-  if (type === 2) return '辅助'
+  if (type == 1 || type == 2 || type == 4) return '输出'
+  if (type == 3) return '辅助'
   return type
 }
 </script>
 
 <template>
   <div class="role-avatar-wrapper" :class="size">
-    <img
-      v-if="role.avatar"
-      class="avatar-img"
-      :src="role.avatar"
-      alt="avatar"
-    />
-    <span
-      v-else
-      class="avatar"
-      :style="{ background: role.color || '#ccc' }"
-    >
-      {{ (role.name || '?').slice(0, 1) }}
-    </span>
+    <div class="avatar-container">
+      <img
+        v-if="role.jobImage"
+        class="avatar-img job-icon"
+        :src="`/src/asset/image/jobs/${role.jobImage}`"
+        alt="job"
+      />
+      <img
+        v-else-if="role.avatar"
+        class="avatar-img"
+        :src="role.avatar"
+        alt="avatar"
+      />
+      <span
+        v-else
+        class="avatar"
+        :style="{ background: role.color || '#ccc' }"
+      >
+        {{ (role.name || '?').slice(0, 1) }}
+      </span>
+      <!-- 用户小头像，悬浮在角落 -->
+      <img
+        v-if="role.jobImage && role.avatar"
+        class="user-mini-overlay"
+        :src="role.avatar"
+      />
+    </div>
     <div class="role-info">
       <b class="name">{{ role.name }}</b>
       <div class="detail-row" v-if="size !== 'small'">
@@ -78,10 +98,16 @@ function getRoleTypeName(type) {
   width: 100%;
 }
 
-.avatar, .avatar-img {
+.avatar-container {
+  position: relative;
   flex: 0 0 44px;
   width: 44px;
   height: 44px;
+}
+
+.avatar, .avatar-img {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -92,6 +118,24 @@ function getRoleTypeName(type) {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.8);
   object-fit: cover;
+}
+
+.job-icon {
+  border-radius: 8px; /* 职业图标用方圆角 */
+  background: #1a1a1a;
+  border-color: #d4af37; /* 金色边框 */
+}
+
+.user-mini-overlay {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 2;
 }
 
 .role-info {

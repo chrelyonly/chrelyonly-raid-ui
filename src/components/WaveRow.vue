@@ -27,9 +27,7 @@ const timeRemaining = computed(() => {
   if (!props.wave.time) return null
 
   const now = new Date()
-  const [hours, minutes] = props.wave.time.split(':').map(Number)
-  const raidDate = new Date()
-  raidDate.setHours(hours, minutes, 0, 0)
+  const raidDate = new Date(props.wave.time.replace(/-/g, '/')) // Compatibility with some browsers
 
   const diff = raidDate - now
   if (diff <= 0) return '🎉 正在开团中'
@@ -39,7 +37,19 @@ const timeRemaining = computed(() => {
     return `🔥 ${diffMinutes}m`
   } else {
     const diffHours = Math.floor(diffMinutes / 60)
+    const hours = diffHours % 24
+    const days = Math.floor(diffHours / 24)
+    if (days > 0) {
+      return `🕒 ${days}d ${hours}h`
+    }
     return `🕒 ${diffHours}h`
+  }
+})
+
+const gridStyle = computed(() => {
+  const count = props.wave.teams?.length || 1
+  return {
+    gridTemplateColumns: `repeat(${count}, 1fr)`
   }
 })
 
@@ -54,6 +64,12 @@ function onDragStart(roleId, team, index) {
 function onRemoveRole(team, index) {
   emit('remove-role', team, index)
 }
+
+const displayTime = computed(() => {
+  if (!props.wave.time) return ''
+  // 仅显示 MM-DD HH:mm 格式
+  return props.wave.time.substring(5)
+})
 </script>
 
 <template>
@@ -89,7 +105,7 @@ function onRemoveRole(team, index) {
     </div>
 
     <!-- 小队网格 -->
-    <div class="teams-grid">
+    <div class="teams-grid" :style="gridStyle">
       <div
         v-for="team in wave.teams"
         :key="team.id"
@@ -241,16 +257,7 @@ function onRemoveRole(team, index) {
 .teams-grid {
   padding: 16px 24px;
   display: grid;
-  /* 核心：最多3列，最少1列，根据容器宽度自适应 */
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 16px;
-}
-
-/* 强制限制最大 3 列 */
-@media (min-width: 1600px) {
-  .teams-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .team-card {

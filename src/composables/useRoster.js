@@ -34,8 +34,8 @@ export function useRoster() {
                   allRoles.push({
                     ...u,
                     ownerId: m.UserName,
-                    // 适配显示逻辑：辅助显示奶量，输出显示伤害
-                    displayDamage: u.type === 2 ? (u.healing || '0') : (u.damage || '0')
+                    // 适配显示逻辑：辅助(3)显示奶量，其它显示伤害
+                    displayDamage: (u.type === 3 || u.type === '3') ? (u.healing || '0') : (u.damage || '0')
                   })
                 })
               }
@@ -139,6 +139,38 @@ export function useRoster() {
     })
   }
 
+  const autoAssignRole = (roleId) => {
+    const role = getRole(roleId)
+    if (!role) return
+
+    // 确定角色职能
+    const isSupport = role.type == 3 || role.type === '辅助'
+    const targetSlots = isSupport ? [3] : [0, 1, 2]
+    const roleTypeName = isSupport ? '辅助' : '输出'
+
+    // 先检查是否已经在排班中，如果在，可以提示或者先移除
+    removeRoleFromAllWaves(roleId)
+
+    // 寻找第一个符合条件的空位
+    for (const wave of waves.value) {
+      for (const team of wave.teams) {
+        for (const slotIndex of targetSlots) {
+          if (team.members[slotIndex] === null) {
+            team.members[slotIndex] = roleId
+            ElMessage.success({
+              message: `✨ 「${role.name}」已自动分配至：${wave.name} - ${team.name} (${slotIndex < 3 ? '输出位' : '辅助位'})`,
+              duration: 3000
+            })
+            return true
+          }
+        }
+      }
+    }
+
+    ElMessage.warning(`⚠️ 抱歉，当前所有波次的${roleTypeName}位置已满`)
+    return false
+  }
+
   const deleteWave = (waveId) => {
     const index = waves.value.findIndex(item => item.id === waveId)
     if (index !== -1) {
@@ -211,7 +243,7 @@ export function useRoster() {
         roles.value.push({
           ...newRole,
           ownerId: roleData.ownerId,
-          displayDamage: newRole.type === 2 ? (newRole.healing || '0') : (newRole.damage || '0')
+          displayDamage: (newRole.type === 3 || newRole.type === '3') ? (newRole.healing || '0') : (newRole.damage || '0')
         })
         ElMessage.success(`✅ 角色「${newRole.name}」已添加`)
       }
@@ -228,6 +260,7 @@ export function useRoster() {
     getRole,
     assignedCount,
     removeRoleFromAllWaves,
+    autoAssignRole,
     deleteWave,
     addWave,
     updateWave,

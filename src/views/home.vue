@@ -26,6 +26,7 @@ const {
   getRole,
   assignedCount,
   removeRoleFromAllWaves,
+  autoAssignRole,
   deleteWave,
   addWave,
   updateWave,
@@ -101,7 +102,7 @@ function notifySchedule() {
         <div class="title-group">
           <div class="crumb">
              <span class="emoji">📅</span>
-             <span class="text-gradient-gold">RAID SCHEDULE / 2026.08.29</span>
+             <span class="text-gradient-gold">2026.08.29</span>
           </div>
           <h1 class="main-title">
              <span class="text-gradient-primary">团本排班表</span>
@@ -175,6 +176,7 @@ function notifySchedule() {
           @start-drag="startDrag"
           @end-drag="endDrag"
           @add-role="showRoleDialog = true"
+          @role-click="autoAssignRole"
         />
       </div>
 

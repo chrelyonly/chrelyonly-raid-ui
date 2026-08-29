@@ -32,7 +32,10 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
 
     // 1. 目标位置职能校验 (3 DPS + 1 Buffer)
     const targetPositionRequirement = index < 3 ? '输出' : '辅助'
-    const rolePosition = role.position || (role.type === '辅助' ? '辅助' : '输出')
+
+    // 统一校验逻辑：type 为 3 或 "辅助" 的是辅助，其它是输出
+    const isSupport = role.type == 3 || role.type === '辅助'
+    const rolePosition = isSupport ? '辅助' : '输出'
 
     if (rolePosition !== targetPositionRequirement) {
       ElMessage.warning(`⚠️ 「${role.name}」是${rolePosition}，不能放入${targetPositionRequirement}位哦`)
@@ -55,7 +58,8 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
         // --- 真正的交换逻辑 ---
         const roleAtTarget = getRole(oldRoleIdAtTarget)
         const sourcePositionRequirement = sourceIndex < 3 ? '输出' : '辅助'
-        const roleAtTargetPos = roleAtTarget.position || (roleAtTarget.type === '辅助' ? '辅助' : '输出')
+        const isTargetSupport = roleAtTarget.type == 3 || roleAtTarget.type === '辅助'
+        const roleAtTargetPos = isTargetSupport ? '辅助' : '输出'
 
         // 也要校验被换的人能不能去出发地
         if (roleAtTargetPos === sourcePositionRequirement) {

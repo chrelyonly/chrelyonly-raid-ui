@@ -1,6 +1,7 @@
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import JobDialog from './JobDialog.vue'
 
 const props = defineProps({
   modelValue: Boolean,
@@ -12,10 +13,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'submit'])
 
+const jobPickerVisible = ref(false)
+
 const form = reactive({
   ownerId: '',
   name: '',
   job: '',
+  jobImage: '',
   type: 1,
   reputation: '',
   damage: '',
@@ -28,6 +32,7 @@ function resetForm() {
     ownerId: '',
     name: '',
     job: '',
+    jobImage: '',
     type: 1,
     reputation: '',
     damage: '',
@@ -36,8 +41,8 @@ function resetForm() {
 }
 
 function handleSubmit() {
-  if (!form.ownerId || !form.name) {
-    return ElMessage.warning('请填写所属用户和角色名称')
+  if (!form.ownerId || !form.name || !form.job) {
+    return ElMessage.warning('请填写所属用户、角色名称和职业')
   }
 
   emit('submit', {
@@ -45,6 +50,11 @@ function handleSubmit() {
   })
   emit('update:modelValue', false)
   resetForm()
+}
+
+function handleJobSelect(subJob) {
+  form.job = subJob.name
+  form.jobImage = subJob.image
 }
 </script>
 
@@ -81,15 +91,21 @@ function handleSubmit() {
       </el-form-item>
 
       <el-form-item label="职业">
-        <el-input v-model="form.job" placeholder="例如：吊机、红狗" />
+        <el-input
+          v-model="form.job"
+          placeholder="点击选择职业"
+          readonly
+          @click="jobPickerVisible = true"
+          style="cursor: pointer"
+        />
       </el-form-item>
 
       <el-form-item label="角色定位">
         <el-radio-group v-model="form.type">
-          <el-radio-button label="大C" :value="1" />
-          <el-radio-button label="小C" :value="2"  />
-          <el-radio-button label="辅助" :value="3"  />
-          <el-radio-button label="混子" :value="4"  />
+          <el-radio-button :label="1">大C</el-radio-button>
+          <el-radio-button :label="2">小C</el-radio-button>
+          <el-radio-button :label="3">辅助</el-radio-button>
+          <el-radio-button :label="4">混子</el-radio-button>
         </el-radio-group>
       </el-form-item>
 
@@ -99,7 +115,7 @@ function handleSubmit() {
         </el-input>
       </el-form-item>
 
-      <el-form-item v-if="form.type !== '3'" label="伤害">
+      <el-form-item v-if="form.type !== 3" label="伤害">
         <el-input v-model="form.damage" placeholder="模拟" type="number" step="0.1">
           <template #append>亿</template>
         </el-input>
@@ -116,6 +132,8 @@ function handleSubmit() {
         <el-button type="primary" @click="handleSubmit" class="save-btn">确认添加</el-button>
       </div>
     </template>
+
+    <JobDialog v-model="jobPickerVisible" @select="handleJobSelect" />
   </el-dialog>
 </template>
 
