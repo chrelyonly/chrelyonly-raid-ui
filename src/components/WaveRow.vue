@@ -61,7 +61,7 @@ const modeName = computed(() => {
 const gridStyle = computed(() => {
   const count = props.wave.teams?.length || 1
   return {
-    gridTemplateColumns: `repeat(${count}, 1fr)`
+    '--team-count': count
   }
 })
 

@@ -215,9 +215,16 @@ function notifySchedule() {
 </template>
 
 <style scoped>
+<style scoped>
 .app {
   min-height: 100vh;
   padding: 48px;
+}
+
+@media (max-width: 768px) {
+  .app {
+    padding: 16px;
+  }
 }
 
 .main {
@@ -231,18 +238,19 @@ function notifySchedule() {
   margin-bottom: 32px;
 }
 
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+}
+
 .title-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.crumb {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 20px;
-  font-weight: 800;
 }
 
 .main-title {
@@ -254,46 +262,10 @@ function notifySchedule() {
   line-height: 1;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.action-btn {
-  height: 60px;
-  padding: 0 40px;
-  border-radius: 30px;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  font-weight: 800;
-  font-size: 20px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 20px rgba(26, 77, 64, 0.15);
-  background: var(--primary-color);
-  color: #fff;
-}
-
-.action-btn:hover {
-  transform: translateY(-2px);
-  background: var(--primary-light);
-  box-shadow: 0 8px 25px rgba(26, 77, 64, 0.25);
-}
-
-.action-btn:active {
-  transform: translateY(0);
-}
-
-.action-btn .emoji {
-  font-size: 24px;
-  transition: transform 0.3s ease;
-}
-
-.action-btn:hover .emoji {
-  transform: scale(1.2) rotate(10deg);
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 32px;
+  }
 }
 
 .summary {
@@ -304,32 +276,34 @@ function notifySchedule() {
   margin-bottom: 32px;
 }
 
-.summary-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+@media (max-width: 768px) {
+  .summary {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
 }
 
 .summary b { font-size: 32px; }
-.summary-sub { font-size: 20px; font-weight: 800; color: var(--text-sub); display: flex; align-items: center; gap: 10px; }
-
-.title-with-emoji {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+@media (max-width: 768px) {
+  .summary b { font-size: 24px; }
 }
 
-.sub-hint {
-  font-size: 18px;
-  color: var(--text-sub);
-  font-weight: 800;
-  margin-left: 15px;
+.summary-sub { font-size: 20px; font-weight: 800; color: var(--text-sub); display: flex; align-items: center; gap: 10px; }
+@media (max-width: 768px) {
+  .summary-sub { font-size: 16px; }
 }
 
 .layout {
   display: grid;
   grid-template-columns: 1fr 450px;
   gap: 32px;
+}
+
+@media (max-width: 1200px) {
+  .layout { grid-template-columns: 1fr; }
 }
 
 .schedule {
@@ -345,61 +319,44 @@ function notifySchedule() {
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  .schedule-title {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
 .schedule-title h2 { margin: 0; font-size: 30px; font-weight: 900; }
 .schedule-title span { font-size: 18px; color: var(--text-sub); font-weight: 700; }
 
-.schedule-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.refresh-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.05);
-  background: #fff;
-  color: var(--text-sub);
-  transition: all 0.3s;
-}
-
-.refresh-btn:hover {
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-  background: rgba(99, 102, 241, 0.05);
-}
-
-.refresh-btn.is-loading :deep(.el-icon) {
-  animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.add-mini-btn {
-  padding: 10px 24px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.06);
-  background: #fff;
-  color: var(--primary-color);
-  font-weight: 800;
+.sub-hint {
   font-size: 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  color: var(--text-sub);
+  font-weight: 800;
+  margin-left: 15px;
 }
 
+@media (max-width: 768px) {
+  .sub-hint {
+    margin-left: 0;
+    display: block;
+    margin-top: 4px;
+  }
+}
 
 .waves-grid {
   padding: 0 24px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .waves-grid {
+    padding: 0;
+  }
 }
 
 .trash-zone {
@@ -419,9 +376,11 @@ function notifySchedule() {
   opacity: 0.6;
 }
 
-.trash-zone:hover {
-  opacity: 1;
-  background: rgba(214, 64, 64, 0.05);
+@media (max-width: 768px) {
+  .trash-zone {
+    margin: 16px 0;
+    font-size: 16px;
+  }
 }
 
 .trash-icon { width: 32px; height: 32px; }
