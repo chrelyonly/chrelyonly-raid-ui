@@ -83,7 +83,7 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
       // 从左侧角色库拖入
       removeRoleFromAllWaves(role.id)
       team.members[index] = role.id
-      ElMessage.success(`✨ 「${role.name}」已加入 ${team.name} 🎉`)
+      ElMessage.success(`✨ 「${role.name}」已加入 ${team.name} 别忘记保存编队哦🎉`)
     }
 
     endDrag()

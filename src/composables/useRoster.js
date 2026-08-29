@@ -1,5 +1,28 @@
 import {computed, ref} from 'vue'
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
+
+// 预定义一组好看的配色
+const USER_PALETTE = [
+  { bg: '#e0f2fe', text: '#0369a1' }, // 浅蓝
+  { bg: '#fef3c7', text: '#b45309' }, // 浅黄
+  { bg: '#dcfce7', text: '#15803d' }, // 浅绿
+  { bg: '#f3e8ff', text: '#7e22ce' }, // 浅紫
+  { bg: '#ffe4e6', text: '#be123c' }, // 浅粉
+  { bg: '#ecfeff', text: '#0e7490' }, // 浅青
+  { bg: '#fff7ed', text: '#c2410c' }, // 浅橙
+  { bg: '#f1f5f9', text: '#334155' }, // 灰蓝
+]
+
+function getUserColor(userName) {
+  if (!userName) return USER_PALETTE[0]
+  // 简单的哈希算法，确保同一个用户总是得到同一个颜色
+  let hash = 0
+  for (let i = 0; i < userName.length; i++) {
+    hash = userName.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  const index = Math.abs(hash) % USER_PALETTE.length
+  return USER_PALETTE[index]
+}
 
 export function useRoster() {
   const roles = ref([])
@@ -58,12 +81,14 @@ export function useRoster() {
       if (rg.groupList) {
         rg.groupList.forEach(member => {
           const memberRoles = roles.value.filter(r => r.ownerId === member.UserName)
+          const color = getUserColor(member.UserName)
 
           memberNodes.push({
             id: member.UserName,
             label: member.DisplayName || member.NickName,
             isUser: true,
             avatar: member.SmallHeadImgUrl,
+            userColor: color,
             children: memberRoles.map(r => ({
               id: r.id,
               label: r.name,
@@ -95,7 +120,22 @@ export function useRoster() {
         waves.value = data.map(item => {
           // 优先尝试从 userList 解析编队信息，如果为空则尝试 teams
           const teamsStr = item.userList || item.teams
-          const teams = typeof teamsStr === 'string' ? JSON.parse(teamsStr) : teamsStr
+          let teams = typeof teamsStr === 'string' ? JSON.parse(teamsStr) : teamsStr
+
+          // 如果编队数据为空，根据副本类型初始化默认编队
+          if (!teams || teams.length === 0) {
+            const is12Person = (item.type === 2 || item.type === '2')
+            if (is12Person) {
+              teams = [
+                { id: Date.now() + '-red', name: '红队', members: [null, null, null, null] },
+                { id: Date.now() + '-yellow', name: '黄队', members: [null, null, null, null] },
+                { id: Date.now() + '-green', name: '绿队', members: [null, null, null, null] }
+              ]
+            } else {
+              teams = [{ id: Date.now() + '-red', name: '红队', members: [null, null, null, null] }]
+            }
+          }
+
           return {
             ...item,
             // 统一字段名，兼容旧代码和后端字段
@@ -104,7 +144,7 @@ export function useRoster() {
             time: item.time || item.date,
             boss: item.boss || item.bossName,
             place: item.place || item.address,
-            teams: teams || [{ id: Date.now() + '-1', name: '红队', members: [null, null, null, null] }]
+            teams: teams
           }
         })
       }
@@ -123,10 +163,14 @@ export function useRoster() {
     const role = roleMap.value.get(id)
     if (!role) return null
 
-    // 额外处理一下头像，因为 role 本身可能没存头像，需要从用户那里拿
+    // 额外处理一下头像和所属人名称
     const owner = users.value.find(u => u.userName === role.ownerId)
+    const color = getUserColor(role.ownerId)
+
     return {
       ...role,
+      ownerName: owner ? (owner.displayName || owner.nickName) : '',
+      ownerColor: color,
       avatar: owner ? owner.avatar : role.avatar,
       damage: role.displayDamage || role.damage
     }
@@ -189,10 +233,27 @@ export function useRoster() {
 
   const addWave = async (waveData) => {
     try {
+      // 如果没有编队数据，根据副本类型初始化默认编队并存入 userList
+      if (!waveData.userList && (!waveData.teams || waveData.teams.length === 0)) {
+        const is12Person = (waveData.type === 2 || waveData.type === '2')
+        let initialTeams = []
+        if (is12Person) {
+          initialTeams = [
+            { id: Date.now() + '-red', name: '红队', members: [null, null, null, null] },
+            { id: Date.now() + '-yellow', name: '黄队', members: [null, null, null, null] },
+            { id: Date.now() + '-green', name: '绿队', members: [null, null, null, null] }
+          ]
+        } else {
+          initialTeams = [{ id: Date.now() + '-red', name: '红队', members: [null, null, null, null] }]
+        }
+        waveData.userList = JSON.stringify(initialTeams)
+      }
+
       await window.$https("/dnf-api/addDnfRaid", "post", waveData, 2, {})
       ElMessage.success('🎉 攻坚队创建成功')
       await loadWaves()
     } catch (e) {
+      console.error('Add wave failed:', e)
       ElMessage.error('创建失败')
     }
   }
@@ -208,6 +269,99 @@ export function useRoster() {
       ElMessage.success(`💾 ${wave.name} 编队保存成功`)
     } catch (e) {
       ElMessage.error('保存失败')
+    }
+  }
+
+  const delWave = async (wave) => {
+    try {
+      await window.$https("/dnf-api/delDnfRaid", "post", wave, 2, {})
+      ElMessage.success(`✅ 波次「${wave.name}」已删除`)
+      await loadWaves()
+    } catch (e) {
+      ElMessage.error('删除波次失败')
+    }
+  }
+
+  const sendWaveNotification = async (wave) => {
+    try {
+      // 二次确认
+      await ElMessageBox.confirm(
+        `确定要向所有队员发送「${wave.name}」的攻坚通知吗？`,
+        '发送确认',
+        {
+          confirmButtonText: '立即发送',
+          cancelButtonText: '取消',
+          type: 'info'
+        }
+      )
+
+      // 1. 收集所有接收者的账号 ID (发起人 + 所有队员)
+      const recipientIds = new Set()
+
+      // 查找发起人的真实 ID
+      let leaderId = wave.ownerId || ''
+      const ownerUser = users.value.find(u =>
+        (wave.ownerId && u.userName === wave.ownerId) ||
+        (wave.masterName && (u.displayName === wave.masterName || u.nickName === wave.masterName))
+      )
+      if (ownerUser) leaderId = ownerUser.userName
+      if (leaderId) recipientIds.add(leaderId)
+
+      // 收集所有队员的账号 ID
+      wave.teams.forEach(team => {
+        team.members.forEach(roleId => {
+          if (roleId) {
+            const role = getRole(roleId)
+            if (role && role.ownerId) {
+              recipientIds.add(role.ownerId)
+            }
+          }
+        })
+      })
+
+      // 转换为逗号分隔字符串
+      const finalOwnerIds = Array.from(recipientIds).join(',')
+
+      // 校验必须有接收者
+      if (!finalOwnerIds) {
+        ElMessage.warning(`⚠️ 无法识别接收者账号ID，请确保发起人填写正确或已分配队员`)
+        return
+      }
+
+      // 2. 构造通知文本
+      let msg = `【${wave.name}】攻坚通知\n`
+      msg += `⏰ 时间：${wave.time || wave.date}\n`
+      msg += `📍 地点：${wave.place || wave.address}\n`
+      msg += `👾 Boss：${wave.boss || wave.bossName}\n`
+      msg += `------------------\n`
+
+      wave.teams.forEach(team => {
+        msg += `🛡️ ${team.name}：\n`
+        const memberDetails = team.members.map(id => {
+          if (!id) return '[空缺]'
+
+          const role = getRole(id)
+          if (!role) return '[未知角色]'
+
+          const owner = users.value.find(u => u.userName === role.ownerId)
+          let ownerDisplay = owner ? (owner.displayName || owner.nickName || '未知') : '匿名'
+
+          return `[@${ownerDisplay}] ${role.name}`
+        })
+        msg += `   ${memberDetails.join(' | ')}\n`
+      })
+
+      // 3. 发送请求，所有 ID 都放入 ownerId 字段，不再使用单独的 ids 字段
+      const payload = {
+        msg: msg,
+        ownerId: finalOwnerIds
+      }
+
+      await window.$https("/dnf-api/sendMsg", "post", payload, 2, {})
+      ElMessage.success(`📢 ${wave.name} 通知已发送`)
+    } catch (e) {
+      console.error('Notification Error:', e)
+      ElMessage.error('通知发送失败')
     }
   }
 
@@ -256,6 +410,8 @@ export function useRoster() {
     autoAssignRole,
     addWave,
     saveWaveTeams,
+    sendWaveNotification,
+    delWave,
     addRole,
     delRole,
     refreshData: async () => {

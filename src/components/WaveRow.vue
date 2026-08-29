@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { Edit, Delete, CircleCheck } from '@element-plus/icons-vue'
+import { Edit, Delete, CircleCheck, Bell } from '@element-plus/icons-vue'
 import RoleAvatar from './RoleAvatar.vue'
 import {ElMessage, ElMessageBox} from "element-plus";
 
@@ -22,6 +22,7 @@ const emit = defineEmits([
   'remove-role',
   'edit',
   'save',
+  'notify',
   'delete'
 ])
 
@@ -78,11 +79,17 @@ function onRemoveRole(team, index) {
 
 
 const deleteRow = (row) => {
-  ElMessageBox.confirm("是否删除","提示").then(() => {
-    $https("/dnf-api/delDnfRaid", "post", row, 2, {}).then( res => {
-
-    })
-  })
+  ElMessageBox.confirm(
+    `确定要永久删除波次「${row.name}」吗？`,
+    '删除确认',
+    {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(() => {
+    emit('delete', row)
+  }).catch(() => {})
 }
 </script>
 
@@ -113,7 +120,10 @@ const deleteRow = (row) => {
       </div>
 
       <div class="wave-actions">
-        <button type="button" class="mini-btn save" title="保存编队" @click="$emit('save', wave)"><CircleCheck /></button>
+        <button type="button" class="mini-btn notify" title="发送通知" @click="$emit('notify', wave)"><Bell /></button>
+        <button type="button" class="save-btn-prominent" @click="$emit('save', wave)">
+          <CircleCheck class="btn-icon" /> 保存编队
+        </button>
         <button type="button" class="mini-btn delete" title="删除波次" @click="deleteRow(wave)"><Delete /></button>
       </div>
     </div>
@@ -149,6 +159,17 @@ const deleteRow = (row) => {
             @drop="onDrop(team, index)"
           >
             <template v-if="roleId && getRole(roleId)">
+              <div
+                class="slot-owner-tag"
+                :style="{ backgroundColor: getRole(roleId).ownerColor.bg }"
+              >
+                <span
+                  class="owner-name"
+                  :style="{ color: getRole(roleId).ownerColor.text }"
+                >
+                  @{{ getRole(roleId).ownerName }}
+                </span>
+              </div>
               <div
                 class="assigned-role"
                 draggable="true"
@@ -225,7 +246,7 @@ const deleteRow = (row) => {
 .meta-row {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 12px;
   margin-top: 10px;
 }
 
@@ -266,13 +287,45 @@ const deleteRow = (row) => {
 
 .mini-btn svg { width: 20px; height: 20px; }
 .mini-btn:hover { background: var(--primary-color); color: #fff; transform: scale(1.1); }
-.mini-btn.save:hover { background: #52c41a; }
+.mini-btn.notify:hover { background: #6366f1; }
 .mini-btn.delete:hover { background: #ff4d4f; }
+
+.save-btn-prominent {
+  padding: 0 20px;
+  height: 44px;
+  border-radius: 22px;
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  font-weight: 800;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+}
+
+.save-btn-prominent:hover {
+  background: #ff7875;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 77, 79, 0.4);
+}
+
+.save-btn-prominent:active {
+  transform: translateY(0) scale(1);
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+}
 
 .teams-grid {
   padding: 24px 32px;
   display: grid;
-  gap: 24px;
+  gap: 12px;
 }
 
 .team-card {
@@ -334,14 +387,41 @@ const deleteRow = (row) => {
 
 .slot-cell {
   position: relative;
-  height: 54px;
+  min-height: 86px; /* 进一步增加高度以容纳顶部标签 */
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 10px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column; /* 改为垂直布局 */
+  align-items: flex-start;
+  padding: 0; /* 移除默认内边距，交给内部元素 */
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.slot-owner-tag {
+  width: 100%;
+  background: rgba(26, 77, 64, 0.08);
+  padding: 4px 10px;
+  border-bottom: 1px solid rgba(26, 77, 64, 0.05);
+}
+
+.owner-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary-color);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assigned-role {
+  width: 100%;
+  padding: 8px 10px;
+  flex: 1;
   display: flex;
   align-items: center;
-  padding: 4px 8px;
-  transition: all 0.2s;
 }
 
 .slot-cell.output {
@@ -368,6 +448,15 @@ const deleteRow = (row) => {
 
 .slot-cell.output:hover { border-color: #ff4d4f; }
 .slot-cell.support:hover { border-color: #52c41a; }
+
+.slot-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
 
 .slot-placeholder .label {
   font-size: 11px;

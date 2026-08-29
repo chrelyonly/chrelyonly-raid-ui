@@ -12,6 +12,7 @@ import WaveRow from '../components/WaveRow.vue'
 import RoleTree from '../components/RoleTree.vue'
 import WaveDialog from '../components/WaveDialog.vue'
 import RoleDialog from '../components/RoleDialog.vue'
+import {Refresh} from "@element-plus/icons-vue";
 
 /**
  * =========================
@@ -29,6 +30,8 @@ const {
   autoAssignRole,
   addWave,
   saveWaveTeams,
+  sendWaveNotification,
+  delWave,
   addRole,
   delRole,
   refreshData
@@ -53,6 +56,15 @@ const showRoleDialog = ref(false)
 const isEditMode = ref(false)
 const editingWaveId = ref(null)
 const initialFormData = ref({})
+const isRefreshing = ref(false)
+
+const handleRefresh = async () => {
+  isRefreshing.value = true
+  await refreshData()
+  setTimeout(() => {
+    isRefreshing.value = false
+  }, 500)
+}
 
 function openCreateDialog() {
   isEditMode.value = false
@@ -128,9 +140,20 @@ function notifySchedule() {
               <h2>波次排班</h2>
               <span class="sub-hint"><span class="emoji">👥</span> 拖动角色调整位置</span>
             </div>
-            <button class="add-mini-btn" @click="openCreateDialog">
-               <span class="emoji">➕</span> 添加波次
-            </button>
+            <div class="schedule-actions">
+              <el-tooltip content="刷新波次" placement="top">
+                <el-button
+                    circle
+                    :icon="Refresh"
+                    class="refresh-btn"
+                    :class="{ 'is-loading': isRefreshing }"
+                    @click="handleRefresh"
+                />
+              </el-tooltip>
+              <button class="add-mini-btn" @click="openCreateDialog">
+                <span class="emoji">➕</span> 添加波次
+              </button>
+            </div>
           </div>
 
           <!-- 波次列表：紧凑网格布局 -->
@@ -146,6 +169,8 @@ function notifySchedule() {
               @remove-role="removeRoleFromWave"
               @edit="openEditDialog"
               @save="saveWaveTeams"
+              @notify="sendWaveNotification"
+              @delete="delWave"
             />
           </div>
 
@@ -323,6 +348,37 @@ function notifySchedule() {
 .schedule-title h2 { margin: 0; font-size: 30px; font-weight: 900; }
 .schedule-title span { font-size: 18px; color: var(--text-sub); font-weight: 700; }
 
+.schedule-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.refresh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  background: #fff;
+  color: var(--text-sub);
+  transition: all 0.3s;
+}
+
+.refresh-btn:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.refresh-btn.is-loading :deep(.el-icon) {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .add-mini-btn {
   padding: 10px 24px;
   border-radius: 14px;
@@ -343,7 +399,7 @@ function notifySchedule() {
   padding: 0 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
 }
 
 .trash-zone {

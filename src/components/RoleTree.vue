@@ -125,7 +125,12 @@ function onDeleteRole(role) {
           <!-- 用户节点 -->
           <div v-else-if="data.isUser" class="user-label">
             <el-avatar :size="20" :src="data.avatar" class="user-mini-avatar" />
-            <span>{{ node.label }}</span>
+            <span
+              class="user-tag"
+              :style="{ backgroundColor: data.userColor?.bg, color: data.userColor?.text }"
+            >
+              {{ node.label }}
+            </span>
           </div>
 
           <!-- 分组节点 -->
@@ -144,7 +149,7 @@ function onDeleteRole(role) {
   padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
   height: calc(100vh - 48px);
   position: sticky;
   top: 24px;
@@ -296,6 +301,13 @@ function onDeleteRole(role) {
   width: 28px;
   height: 28px;
   border: 1px solid rgba(0,0,0,0.05);
+}
+
+.user-tag {
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 16px;
 }
 
 /* 角色卡片：小型化 */
