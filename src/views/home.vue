@@ -100,20 +100,10 @@ function notifySchedule() {
       <!-- ==================== Header ==================== -->
       <header class="header">
         <div class="title-group">
-          <div class="crumb">
-             <span class="emoji">📅</span>
-             <span class="text-gradient-gold">2026.08.29</span>
-          </div>
           <h1 class="main-title">
              <span class="text-gradient-primary">团本排班表</span>
              <span class="emoji">⚔️</span>
           </h1>
-        </div>
-        <div class="header-right">
-          <button class="add-mini-btn" type="button" @click="openCreateDialog">
-            <span class="emoji">✨</span>
-            <span>新建波次</span>
-          </button>
         </div>
       </header>
 

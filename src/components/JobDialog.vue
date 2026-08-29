@@ -28,6 +28,9 @@ function getImageUrl(name, type) {
     width="1100px"
     class="job-picker-dialog"
     destroy-on-close
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    append-to-body
     @update:model-value="val => $emit('update:modelValue', val)"
   >
     <div class="job-picker-container">
@@ -217,23 +220,6 @@ function getImageUrl(name, type) {
 
 .sub-job-card:hover .sub-job-name {
   color: #d4af37;
-}
-
-/* Scrollbar styling */
-.base-jobs-list::-webkit-scrollbar,
-.sub-jobs-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.base-jobs-list::-webkit-scrollbar-thumb,
-.sub-jobs-content::-webkit-scrollbar-thumb {
-  background: #36393d;
-  border-radius: 3px;
-}
-
-.base-jobs-list::-webkit-scrollbar-track,
-.sub-jobs-content::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 /* Dialog overrides */

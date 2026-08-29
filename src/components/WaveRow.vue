@@ -27,22 +27,23 @@ const timeRemaining = computed(() => {
   if (!props.wave.time) return null
 
   const now = new Date()
-  const raidDate = new Date(props.wave.time.replace(/-/g, '/')) // Compatibility with some browsers
+  const raidDate = new Date(props.wave.time.replace(/-/g, '/')) // 兼容性处理
 
   const diff = raidDate - now
   if (diff <= 0) return '🎉 正在开团中'
 
   const diffMinutes = Math.floor(diff / (1000 * 60))
-  if (diffMinutes < 60) {
-    return `🔥 ${diffMinutes}m`
+  const minutes = diffMinutes % 60
+  const totalHours = Math.floor(diffMinutes / 60)
+  const hours = totalHours % 24
+  const days = Math.floor(totalHours / 24)
+
+  if (days > 0) {
+    return `还有 ${days} 天 ${hours} 小时`
+  } else if (hours > 0) {
+    return `还有 ${hours} 小时 ${minutes} 分钟`
   } else {
-    const diffHours = Math.floor(diffMinutes / 60)
-    const hours = diffHours % 24
-    const days = Math.floor(diffHours / 24)
-    if (days > 0) {
-      return `🕒 ${days}d ${hours}h`
-    }
-    return `🕒 ${diffHours}h`
+    return `还有 ${minutes} 分钟`
   }
 })
 
@@ -159,7 +160,6 @@ const displayTime = computed(() => {
 
 <style scoped>
 .wave-container {
-  background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
   border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.5);
