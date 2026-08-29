@@ -17,7 +17,7 @@ function handleSelect(subJob) {
 }
 
 function getImageUrl(name, type) {
-  return `/src/asset/image/${type}/${name}`
+  return `/image/${type}/${name}`
 }
 </script>
 
@@ -163,7 +163,7 @@ function getImageUrl(name, type) {
 }
 
 .sub-jobs-grid {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }

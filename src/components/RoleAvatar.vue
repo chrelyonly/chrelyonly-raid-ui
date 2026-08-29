@@ -41,7 +41,7 @@ function getRoleTypeName(type) {
       <img
         v-if="role.jobImage"
         class="avatar-img job-icon"
-        :src="`/src/asset/image/jobs/${role.jobImage}`"
+        :src="`/image/jobs/${role.jobImage}`"
         alt="job"
       />
       <img

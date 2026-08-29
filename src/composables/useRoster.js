@@ -243,6 +243,7 @@ export function useRoster() {
         roles.value.push({
           ...newRole,
           ownerId: roleData.ownerId,
+          jobImage: roleData.jobImage, // 确保保存职业图片
           displayDamage: (newRole.type === 3 || newRole.type === '3') ? (newRole.healing || '0') : (newRole.damage || '0')
         })
         ElMessage.success(`✅ 角色「${newRole.name}」已添加`)

@@ -91,13 +91,21 @@ function handleJobSelect(subJob) {
       </el-form-item>
 
       <el-form-item label="职业">
-        <el-input
-          v-model="form.job"
-          placeholder="点击选择职业"
-          readonly
-          @click="jobPickerVisible = true"
-          style="cursor: pointer"
-        />
+        <div class="job-selector-wrapper">
+          <el-input
+            v-model="form.job"
+            placeholder="点击选择职业"
+            readonly
+            @click="jobPickerVisible = true"
+            style="cursor: pointer"
+          />
+          <div v-if="form.jobImage" class="job-preview-card" @click="jobPickerVisible = true">
+             <img :src="`/image/jobs/${form.jobImage}`" class="preview-img" />
+             <div class="preview-overlay">
+               <span>已选择: {{ form.job }}</span>
+             </div>
+          </div>
+        </div>
       </el-form-item>
 
       <el-form-item label="角色定位">
@@ -159,5 +167,48 @@ function handleJobSelect(subJob) {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.job-selector-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.job-preview-card {
+  width: 200px;
+  height: 100px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+}
+
+.job-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
 }
 </style>
