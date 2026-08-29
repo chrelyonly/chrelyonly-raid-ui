@@ -155,16 +155,43 @@ function onDeleteRole(role) {
   top: 24px;
 }
 
+@media (max-width: 768px) {
+  .role-library {
+    padding: 16px;
+    height: auto;
+    position: static;
+  }
+}
+
 .library-header {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+@media (max-width: 768px) {
+  .library-header {
+    gap: 12px;
+  }
+}
+
 .header-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+@media (max-width: 480px) {
+  .header-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
 
 .title-with-tag {

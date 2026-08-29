@@ -161,6 +161,12 @@ function handleDelete() {
   font-weight: 900;
 }
 
+@media (max-width: 480px) {
+  .name {
+    font-size: 18px;
+  }
+}
+
 .detail-row {
   display: flex;
   align-items: center;
@@ -171,6 +177,12 @@ function handleDelete() {
   color: #3d4d44;
   font-size: 16px; /* 从 12px 增加 */
   font-weight: 800;
+}
+
+@media (max-width: 480px) {
+  .detail {
+    font-size: 14px;
+  }
 }
 
 .mini-tag {

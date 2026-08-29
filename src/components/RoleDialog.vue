@@ -76,7 +76,8 @@ onMounted(()=>{
   <el-dialog
     :model-value="modelValue"
     title="✨ 添加新角色"
-    width="600px"
+    width="90%"
+    style="max-width: 600px"
     destroy-on-close
     class="custom-dialog"
     :close-on-click-modal="false"

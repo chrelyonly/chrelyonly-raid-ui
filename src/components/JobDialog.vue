@@ -21,7 +21,8 @@ function getImageUrl(name, type) {
   <el-dialog
     :model-value="modelValue"
     title="选择职业"
-    width="1200px"
+    width="95%"
+    style="max-width: 1200px"
     class="job-picker-dialog"
     destroy-on-close
     :close-on-click-modal="false"
@@ -107,8 +108,15 @@ function getImageUrl(name, type) {
 
 .sub-jobs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .sub-jobs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
 }
 
 .sub-job-card {

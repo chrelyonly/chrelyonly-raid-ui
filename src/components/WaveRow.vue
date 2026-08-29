@@ -212,10 +212,20 @@ const deleteRow = (row) => {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+@media (max-width: 768px) {
+  .wave-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}
+
 .title-row {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .wave-name {
@@ -224,12 +234,26 @@ const deleteRow = (row) => {
   margin-right: 8px;
 }
 
+@media (max-width: 768px) {
+  .wave-name {
+    font-size: 20px;
+  }
+}
+
 .wave-badge {
   border-radius: 10px !important;
   font-weight: 800 !important;
   height: 34px !important;
   padding: 0 14px !important;
   font-size: 16px !important;
+}
+
+@media (max-width: 768px) {
+  .wave-badge {
+    height: 28px !important;
+    font-size: 12px !important;
+    padding: 0 8px !important;
+  }
 }
 
 .mode-badge {
@@ -248,6 +272,7 @@ const deleteRow = (row) => {
   align-items: center;
   gap: 12px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .wave-meta {
@@ -259,6 +284,12 @@ const deleteRow = (row) => {
   gap: 6px;
 }
 
+@media (max-width: 768px) {
+  .wave-meta {
+    font-size: 14px;
+  }
+}
+
 .countdown-hint {
   font-size: 16px;
   color: #a87b2f;
@@ -268,6 +299,14 @@ const deleteRow = (row) => {
 .wave-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .wave-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .mini-btn {
@@ -283,6 +322,13 @@ const deleteRow = (row) => {
   justify-content: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   transition: 0.2s;
+}
+
+@media (max-width: 768px) {
+  .mini-btn {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .mini-btn svg { width: 20px; height: 20px; }
@@ -307,6 +353,14 @@ const deleteRow = (row) => {
   box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
 }
 
+@media (max-width: 768px) {
+  .save-btn-prominent {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+
 .save-btn-prominent:hover {
   background: #ff7875;
   transform: translateY(-2px) scale(1.05);
@@ -325,7 +379,15 @@ const deleteRow = (row) => {
 .teams-grid {
   padding: 24px 32px;
   display: grid;
+  grid-template-columns: repeat(var(--team-count, 1), 1fr);
   gap: 12px;
+}
+
+@media (max-width: 1200px) {
+  .teams-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
 }
 
 .team-card {
@@ -339,6 +401,12 @@ const deleteRow = (row) => {
   align-items: flex-start;
   gap: 16px;
   min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .team-card {
+    padding: 16px;
+  }
 }
 
 .team-header {
@@ -383,6 +451,12 @@ const deleteRow = (row) => {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .slot-cell {

@@ -280,9 +280,22 @@ function notifySchedule() {
   .summary {
     padding: 16px 20px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* Center for mobile */
+    text-align: center;
     gap: 12px;
     margin-bottom: 20px;
+  }
+}
+
+.summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+@media (max-width: 768px) {
+  .summary-info {
+    align-items: center;
   }
 }
 
@@ -330,6 +343,64 @@ function notifySchedule() {
 
 .schedule-title h2 { margin: 0; font-size: 30px; font-weight: 900; }
 .schedule-title span { font-size: 18px; color: var(--text-sub); font-weight: 700; }
+
+.schedule-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .schedule-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.refresh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  background: #fff;
+  color: var(--text-sub);
+  transition: all 0.3s;
+}
+
+.refresh-btn:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.refresh-btn.is-loading :deep(.el-icon) {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.add-mini-btn {
+  padding: 10px 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: #fff;
+  color: var(--primary-color);
+  font-weight: 800;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-mini-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+}
 
 .sub-hint {
   font-size: 18px;
