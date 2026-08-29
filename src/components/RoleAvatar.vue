@@ -58,8 +58,11 @@ function getRoleTypeName(type) {
       </div>
       <div class="detail-row" v-else>
          <small class="detail">
-           <span v-if="role.reputation">{{ role.reputation }}w · </span>
-           🔪{{ role.damage }}
+           <span >{{ role.reputation }}w · </span>
+           {{role.type}}
+           <span v-if="role.type !== 3">🔪{{ role.damage }}</span>
+           <span v-else>🍼{{ role.damage }}</span>
+
          </small>
       </div>
     </div>

@@ -202,8 +202,6 @@ export function useRoster() {
       // 将前端定义的类型转回后端数值 (1输出 2辅助)
       const submitData = {
         ...roleData,
-        type: roleData.type === '辅助' ? 2 : 1,
-        // 如果是辅助，damage 输入的是亿，或者已经在 RoleDialog 处理过了
       }
 
       const res = await window.$https("/dnf-api/addRole", "post", submitData, 2, {})
