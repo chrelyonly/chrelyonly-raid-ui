@@ -3,45 +3,70 @@ import {ElMessage} from 'element-plus'
 
 export function useRoster() {
   const roles = ref([])
-  const groups = ref([])
+  const rawGroups = ref([]) // 原始群组数据
+  const users = ref([])     // 所有用户列表
 
-  const loadRoles = async () => {
+  const loadData = async () => {
     try {
-      const res = await window.$https("/dnf-api/getUserInfo", "get", {}, 1, {})
-
-      if (res.data) {
-        const allRoles = []
-        groups.value = res.data.map(group => ({
-          id: group.id,
-          label: group.name,
-          children: group.groupList.map(member => {
-            const role = {
-              id: member.UserName,
-              name: member.DisplayName || member.NickName,
-              avatar: member.SmallHeadImgUrl,
-              job: '群成员',
-              type: '',
-              position: '输出',
-              damage: member.NickName || 'DNF玩家',
-              color: '#4b8cff'
-            }
-            allRoles.push(role)
-            return {
-              id: member.UserName,
-              label: role.name,
-              role: role
-            }
-          })
-        }))
-        roles.value = allRoles
+      const res = await window.$https("/dnf-api/getGroupInfo", "get", {}, 1, {})
+      // 兼容两种返回格式
+      const data = res.data.data || res.data
+      if (data) {
+        rawGroups.value = data
+        const allUsers = []
+        data.forEach(g => {
+          if (g.groupList) {
+            g.groupList.forEach(m => {
+              allUsers.push({
+                userName: m.UserName,
+                nickName: m.NickName,
+                displayName: m.DisplayName,
+                avatar: m.SmallHeadImgUrl,
+                groupId: g.id,
+                groupName: g.name
+              })
+            })
+          }
+        })
+        users.value = allUsers
       }
     } catch (e) {
-      console.error('Failed to load roles', e)
+      console.error('Failed to load users', e)
     }
   }
 
-  // Load initially
-  loadRoles()
+  // 计算树形结构：群组 -> 用户 -> 角色
+  const groups = computed(() => {
+    return rawGroups.value.map(rg => {
+      const groupRoles = []
+      if (rg.groupList) {
+        rg.groupList.forEach(user => {
+          const userRoles = roles.value.filter(r => r.ownerId === user.UserName)
+          if (userRoles.length > 0) {
+            groupRoles.push({
+              id: user.UserName,
+              label: user.DisplayName || user.NickName,
+              isUser: true,
+              children: userRoles.map(r => ({
+                id: r.id,
+                label: r.name,
+                role: r
+              }))
+            })
+          }
+        })
+      }
+
+      return {
+        id: rg.id,
+        label: rg.name,
+        children: groupRoles
+      }
+    }).filter(g => g.children.length > 0)
+  })
+
+  // 初始化加载
+  loadData()
 
   const waves = ref([
     {
@@ -52,20 +77,9 @@ export function useRoster() {
       boss: '雾神·雨',
       place: '雾神尼',
       teams: [
-        { id: '1-1', name: '红队', members: [1, 2, 7, 3] }
+        { id: '1-1', name: '红队', members: [null, null, null, null] }
       ]
-    },
-    {
-      id: 2,
-      name: '第 2 波',
-      mode: '4人周本',
-      time: '21:30',
-      boss: '雾神·雨',
-      place: '雾神尼',
-      teams: [
-        { id: '2-1', name: '红队', members: [4, 6, null, 5] }
-      ]
-    },
+    }
   ])
 
   const roleMap = computed(() => new Map(roles.value.map(role => [role.id, role])))
@@ -107,7 +121,6 @@ export function useRoster() {
     const maxId = waves.value.length ? Math.max(...waves.value.map(item => item.id)) : 0
     const newId = maxId + 1
 
-    // Initialize teams based on mode
     const teamCount = waveData.mode === '12人团本' ? 3 : 1
     const teamNames = ['红队', '黄队', '绿队']
     const teams = []
@@ -133,7 +146,6 @@ export function useRoster() {
     if (index !== -1) {
       const currentWave = waves.value[index]
 
-      // If mode changed, we might need to reset teams
       if (currentWave.mode !== waveData.mode) {
         const teamCount = waveData.mode === '12人团本' ? 3 : 1
         const teamNames = ['红队', '黄队', '绿队']
@@ -154,8 +166,17 @@ export function useRoster() {
     }
   }
 
+  const addRole = async (roleData) => {
+    const res = await window.$https("/dnf-api/addRole", "post", roleData, 2, {})
+    // 兼容两种返回格式
+    const data = res.data
+    roles.value.push(data)
+    ElMessage.success(`✅ 角色「${data.userName}」已添加`)
+  }
+
   return {
     roles,
+    users,
     groups,
     waves,
     getRole,
@@ -163,6 +184,7 @@ export function useRoster() {
     removeRoleFromAllWaves,
     deleteWave,
     addWave,
-    updateWave
+    updateWave,
+    addRole
   }
 }

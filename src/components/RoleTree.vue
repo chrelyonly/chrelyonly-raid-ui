@@ -14,7 +14,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['start-drag', 'end-drag'])
+const emit = defineEmits(['start-drag', 'end-drag', 'add-role'])
 
 const filterText = ref('')
 const treeRef = ref(null)
@@ -43,6 +43,7 @@ function onDragStart(role) {
       <div class="header-main">
         <h2>角色库</h2>
         <el-tag size="small" effect="plain" class="count-tag">{{ totalMembers }}</el-tag>
+        <el-button size="small" type="primary" plain @click="$emit('add-role')">添加角色</el-button>
       </div>
       <el-input
         v-model="filterText"

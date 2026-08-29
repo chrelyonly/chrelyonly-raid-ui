@@ -39,13 +39,20 @@ function getRoleTagType(type) {
     <div class="role-info">
       <b class="name">{{ role.name }}</b>
       <div class="detail-row" v-if="size !== 'small'">
-        <small class="detail">{{ role.job }} · {{ role.damage }}</small>
+        <small class="detail">
+          {{ role.job }}
+          <span v-if="role.reputation">· {{ role.reputation }}w</span>
+          · {{ role.damage }}
+        </small>
         <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag" v-if="role.type">
           {{ role.type }}
         </el-tag>
       </div>
       <div class="detail-row" v-else>
-         <small class="detail">{{ role.damage }}</small>
+         <small class="detail">
+           <span v-if="role.reputation">{{ role.reputation }}w · </span>
+           {{ role.damage }}
+         </small>
       </div>
     </div>
   </div>

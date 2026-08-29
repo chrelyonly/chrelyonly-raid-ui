@@ -11,6 +11,7 @@ import { useDragAndDrop } from '../composables/useDragAndDrop'
 import WaveRow from '../components/WaveRow.vue'
 import RoleTree from '../components/RoleTree.vue'
 import WaveDialog from '../components/WaveDialog.vue'
+import RoleDialog from '../components/RoleDialog.vue'
 
 /**
  * =========================
@@ -19,6 +20,7 @@ import WaveDialog from '../components/WaveDialog.vue'
  */
 const {
   roles,
+  users,
   groups,
   waves,
   getRole,
@@ -26,7 +28,8 @@ const {
   removeRoleFromAllWaves,
   deleteWave,
   addWave,
-  updateWave
+  updateWave,
+  addRole
 } = useRoster()
 
 const {
@@ -44,6 +47,7 @@ const {
  * =========================
  */
 const showWaveDialog = ref(false)
+const showRoleDialog = ref(false)
 const isEditMode = ref(false)
 const editingWaveId = ref(null)
 const initialFormData = ref({})
@@ -165,7 +169,13 @@ function notifySchedule() {
         </section>
 
         <!-- ==================== Role Tree ==================== -->
-        <RoleTree :roles="roles" :groups="groups" @start-drag="startDrag" @end-drag="endDrag" />
+        <RoleTree
+          :roles="roles"
+          :groups="groups"
+          @start-drag="startDrag"
+          @end-drag="endDrag"
+          @add-role="showRoleDialog = true"
+        />
       </div>
 
       <p class="foot-note">
@@ -179,6 +189,12 @@ function notifySchedule() {
       :is-edit="isEditMode"
       :initial-data="initialFormData"
       @submit="handleWaveSubmit"
+    />
+
+    <RoleDialog
+      v-model="showRoleDialog"
+      :users="users"
+      @submit="addRole"
     />
   </main>
 </template>
