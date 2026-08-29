@@ -171,63 +171,13 @@ export function useRoster() {
     return false
   }
 
-  const deleteWave = (waveId) => {
-    const index = waves.value.findIndex(item => item.id === waveId)
-    if (index !== -1) {
-      const waveName = waves.value[index].name
-      waves.value.splice(index, 1)
-      ElMessage.success(`${waveName} 🗑️ 已删除`)
-    }
-  }
 
-  const addWave = (waveData) => {
-    const maxId = waves.value.length ? Math.max(...waves.value.map(item => item.id)) : 0
-    const newId = maxId + 1
-
-    const teamCount = waveData.mode === '12人团本' ? 3 : 1
-    const teamNames = ['红队', '黄队', '绿队']
-    const teams = []
-    for (let i = 1; i <= teamCount; i++) {
-      teams.push({
-        id: `${newId}-${i}`,
-        name: teamNames[i - 1],
-        members: [null, null, null, null]
-      })
-    }
-
-    waves.value.push({
-      id: newId,
-      name: `第 ${waves.value.length + 1} 波`,
-      ...waveData,
-      teams
-    })
+  const addWave = async (waveData) => {
+    const res = await window.$https("/dnf-api/addDnfRaid", "post", waveData, 2, {})
+    const newRole = res.data.data || res.data
     ElMessage.success('🎉 攻坚队创建成功')
   }
 
-  const updateWave = (waveId, waveData) => {
-    const index = waves.value.findIndex(w => w.id === waveId)
-    if (index !== -1) {
-      const currentWave = waves.value[index]
-
-      if (currentWave.mode !== waveData.mode) {
-        const teamCount = waveData.mode === '12人团本' ? 3 : 1
-        const teamNames = ['红队', '黄队', '绿队']
-        const teams = []
-        for (let i = 1; i <= teamCount; i++) {
-          teams.push({
-            id: `${waveId}-${i}`,
-            name: teamNames[i - 1],
-            members: [null, null, null, null]
-          })
-        }
-        waves.value[index] = { ...currentWave, ...waveData, teams }
-      } else {
-        waves.value[index] = { ...currentWave, ...waveData }
-      }
-
-      ElMessage.success('✅ 更新成功')
-    }
-  }
 
   const addRole = async (roleData) => {
     try {
@@ -262,9 +212,8 @@ export function useRoster() {
     assignedCount,
     removeRoleFromAllWaves,
     autoAssignRole,
-    deleteWave,
     addWave,
-    updateWave,
-    addRole
+    addRole,
+    refreshData: loadData
   }
 }

@@ -27,10 +27,9 @@ const {
   assignedCount,
   removeRoleFromAllWaves,
   autoAssignRole,
-  deleteWave,
   addWave,
-  updateWave,
-  addRole
+  addRole,
+  refreshData
 } = useRoster()
 
 const {
@@ -67,11 +66,7 @@ function openEditDialog(wave) {
 }
 
 function handleWaveSubmit(formData) {
-  if (isEditMode.value) {
-    updateWave(editingWaveId.value, formData)
-  } else {
     addWave(formData)
-  }
 }
 
 /**
@@ -148,7 +143,6 @@ function notifySchedule() {
               @end-drag="endDrag"
               @remove-role="removeRoleFromWave"
               @edit="openEditDialog"
-              @delete="deleteWave(wave.id)"
             />
           </div>
 
@@ -167,6 +161,7 @@ function notifySchedule() {
           @end-drag="endDrag"
           @add-role="showRoleDialog = true"
           @role-click="autoAssignRole"
+          @refresh="refreshData"
         />
       </div>
 

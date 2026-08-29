@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import RoleAvatar from './RoleAvatar.vue'
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const props = defineProps({
   wave: {
@@ -66,11 +67,14 @@ function onRemoveRole(team, index) {
   emit('remove-role', team, index)
 }
 
-const displayTime = computed(() => {
-  if (!props.wave.time) return ''
-  // 仅显示 MM-DD HH:mm 格式
-  return props.wave.time.substring(5)
-})
+
+const deleteRow = (row) => {
+  ElMessageBox.confirm("是否删除","提示").then(() => {
+    $https("/dnf-api/delDnfRaid", "post", row, 2, {}).then( res => {
+
+    })
+  })
+}
 </script>
 
 <template>
@@ -100,8 +104,7 @@ const displayTime = computed(() => {
       </div>
 
       <div class="wave-actions">
-        <button type="button" class="mini-btn" @click="$emit('edit', wave)"><Edit /></button>
-        <button type="button" class="mini-btn delete" @click="$emit('delete', wave)"><Delete /></button>
+        <button type="button" class="mini-btn delete" @click="deleteRow(wave)"><Delete /></button>
       </div>
     </div>
 

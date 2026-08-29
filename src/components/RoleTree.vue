@@ -1,7 +1,7 @@
 <script setup>
 import {ref, watch, computed, onMounted} from 'vue'
 import RoleAvatar from './RoleAvatar.vue'
-import { Search } from '@element-plus/icons-vue'
+import { Search, Refresh, Plus } from '@element-plus/icons-vue'
 
 const props = defineProps({
   roles: {
@@ -14,14 +14,23 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['start-drag', 'end-drag', 'add-role', 'role-click'])
+const emit = defineEmits(['start-drag', 'end-drag', 'add-role', 'role-click', 'refresh'])
 
 const filterText = ref('')
 const treeRef = ref(null)
+const isRefreshing = ref(false)
 
 watch(filterText, (val) => {
   treeRef.value?.filter(val)
 })
+
+const handleRefresh = async () => {
+  isRefreshing.value = true
+  await emit('refresh')
+  setTimeout(() => {
+    isRefreshing.value = false
+  }, 500)
+}
 
 const filterNode = (value, data) => {
   if (!value) return true
@@ -45,9 +54,29 @@ function onRoleClick(role) {
   <aside class="glass role-library">
     <div class="library-header">
       <div class="header-main">
-        <h2>角色库</h2>
-        <el-tag size="small" effect="plain" class="count-tag">{{ totalRoles }}</el-tag>
-        <el-button size="small" type="primary" plain @click="$emit('add-role')">添加角色</el-button>
+        <div class="title-with-tag">
+          <h2>角色库</h2>
+          <el-tag size="small" effect="plain" class="count-tag">{{ totalRoles }}</el-tag>
+        </div>
+        <div class="header-actions">
+          <el-tooltip content="刷新数据" placement="top">
+            <el-button
+              circle
+              :icon="Refresh"
+              class="refresh-btn"
+              :class="{ 'is-loading': isRefreshing }"
+              @click="handleRefresh"
+            />
+          </el-tooltip>
+          <el-button
+            type="primary"
+            class="add-role-btn"
+            :icon="Plus"
+            @click="$emit('add-role')"
+          >
+            添加角色
+          </el-button>
+        </div>
       </div>
       <el-input
         v-model="filterText"
@@ -124,11 +153,62 @@ function onRoleClick(role) {
   justify-content: space-between;
 }
 
+.title-with-tag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header-main h2 {
   margin: 0;
   font-size: 30px;
   font-weight: 800;
   color: var(--primary-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.add-role-btn {
+  border-radius: 12px;
+  font-weight: 800;
+  padding: 8px 16px;
+  height: 40px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(26, 77, 64, 0.1);
+}
+
+.add-role-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 77, 64, 0.2);
+}
+
+.refresh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  background: #fff;
+  color: var(--text-sub);
+  transition: all 0.3s;
+}
+
+.refresh-btn:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.refresh-btn.is-loading :deep(.el-icon) {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .count-tag {

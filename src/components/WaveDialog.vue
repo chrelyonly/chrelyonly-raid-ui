@@ -20,10 +20,12 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'submit'])
 
 const form = ref({
-  mode: '4人周本',
-  time: '',
-  boss: '雾神·雨',
-  place: '雾神尼'
+  type: '4人周本',
+  date: '',
+  bossName: '米歇尔',
+  name: '干翻米歇尔',
+  masterName: '小黑子',
+  address: '讨伐米歇尔'
 })
 
 watch(
@@ -31,10 +33,12 @@ watch(
   (val) => {
     if (val && Object.keys(val).length > 0) {
       form.value = {
-        mode: val.mode || '4人周本',
-        time: val.time || '',
-        boss: val.boss || '雾神·雨',
-        place: val.place || '雾神尼'
+        type: val.type || '4人周本',
+        date: val.date || '',
+        bossName: val.bossName || '米歇尔',
+        name: val.name || '干翻米歇尔',
+        masterName: val.masterName || '小黑子',
+        address: val.address || '讨伐米歇尔'
       }
     } else {
       resetForm()
@@ -45,10 +49,12 @@ watch(
 
 function resetForm() {
   form.value = {
-    mode: '4人周本',
-    time: '',
-    boss: '雾神·雨',
-    place: '雾神尼'
+    name: '干翻米歇尔',
+    type: '4人周本',
+    date: '',
+    bossName: '米歇尔',
+    masterName: '小黑子',
+    address: '讨伐米歇尔'
   }
 }
 
@@ -57,13 +63,13 @@ function handleClose() {
 }
 
 function handleSubmit() {
-  if (!form.value.time) {
+  if (!form.value.date) {
     ElMessage.warning('请选择攻坚时间')
     return
   }
 
   const now = new Date()
-  const selectedDate = new Date(form.value.time)
+  const selectedDate = new Date(form.value.date)
 
   if (selectedDate <= now) {
     ElMessage.warning('只能选择以后的时间哦！请检查攻坚时间')
@@ -92,16 +98,14 @@ const disabledDate = (time) => {
     @update:model-value="val => $emit('update:modelValue', val)"
   >
     <el-form :model="form" label-width="100px" label-position="left">
-      <el-form-item label="副本模式">
-        <el-radio-group v-model="form.mode">
-          <el-radio-button label="4人周本" value="4人周本" />
-          <el-radio-button label="12人团本" value="12人团本" />
-        </el-radio-group>
+
+      <el-form-item label="攻坚名称">
+        <el-input v-model="form.name" placeholder="例如：讨伐米歇尔" />
       </el-form-item>
 
-      <el-form-item label="攻坚时间">
+      <el-form-item label="时间">
         <el-date-picker
-          v-model="form.time"
+          v-model="form.date"
           type="datetime"
           placeholder="选择日期和时间"
           format="YYYY-MM-DD HH:mm"
@@ -110,13 +114,22 @@ const disabledDate = (time) => {
           style="width: 100%"
         />
       </el-form-item>
+      <el-form-item label="副本模式">
+        <el-radio-group v-model="form.type">
+          <el-radio-button label="4人周本" value="4人周本" />
+          <el-radio-button label="12人团本" value="12人团本" />
+        </el-radio-group>
+      </el-form-item>
 
-      <el-form-item label="攻坚地点">
-        <el-input v-model="form.place" placeholder="例如：雾神尼 / 1-3队" />
+      <el-form-item label="讨伐地点">
+        <el-input v-model="form.address" placeholder="例如：野猪频道" />
       </el-form-item>
 
       <el-form-item label="Boss 名称">
-        <el-input v-model="form.boss" placeholder="例如：雾神·雨" />
+        <el-input v-model="form.bossName" placeholder="例如：野猪" />
+      </el-form-item>
+      <el-form-item label="副本发起人">
+        <el-input v-model="form.masterName" placeholder="例如：小黑子" />
       </el-form-item>
     </el-form>
 
