@@ -110,7 +110,7 @@ function notifySchedule() {
           </h1>
         </div>
         <div class="header-right">
-          <button class="action-btn" type="button" @click="openCreateDialog">
+          <button class="add-mini-btn" type="button" @click="openCreateDialog">
             <span class="emoji">✨</span>
             <span>新建波次</span>
           </button>
@@ -204,7 +204,7 @@ function notifySchedule() {
 <style scoped>
 .app {
   min-height: 100vh;
-  padding: 24px;
+  padding: 48px;
 }
 
 .main {
@@ -215,51 +215,51 @@ function notifySchedule() {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .title-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .crumb {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 10px;
+  font-size: 20px;
   font-weight: 800;
 }
 
 .main-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   margin: 0;
-  font-size: 36px;
+  font-size: 52px;
   line-height: 1;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .action-btn {
-  height: 44px;
-  padding: 0 24px;
-  border-radius: 22px;
+  height: 60px;
+  padding: 0 40px;
+  border-radius: 30px;
   border: none;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   cursor: pointer;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 20px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(26, 77, 64, 0.15);
+  box-shadow: 0 8px 20px rgba(26, 77, 64, 0.15);
   background: var(--primary-color);
   color: #fff;
 }
@@ -275,7 +275,7 @@ function notifySchedule() {
 }
 
 .action-btn .emoji {
-  font-size: 18px;
+  font-size: 24px;
   transition: transform 0.3s ease;
 }
 
@@ -284,77 +284,72 @@ function notifySchedule() {
 }
 
 .summary {
-  padding: 16px 24px;
+  padding: 24px 36px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .summary-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
-.summary b { font-size: 24px; }
-.summary-sub { font-size: 16px; font-weight: 800; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+.summary b { font-size: 32px; }
+.summary-sub { font-size: 20px; font-weight: 800; color: var(--text-sub); display: flex; align-items: center; gap: 10px; }
 
 .title-with-emoji {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .sub-hint {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--text-sub);
   font-weight: 800;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
+  grid-template-columns: 1fr 450px;
+  gap: 32px;
 }
 
 .schedule {
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0);
+  border-radius: 32px;
   overflow: hidden;
 }
 
 .schedule-title {
-  padding: 20px 24px;
+  padding: 28px 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.schedule-title h2 { margin: 0; font-size: 22px; font-weight: 900; }
-.schedule-title span { font-size: 13px; color: var(--text-sub); font-weight: 700; }
+.schedule-title h2 { margin: 0; font-size: 30px; font-weight: 900; }
+.schedule-title span { font-size: 18px; color: var(--text-sub); font-weight: 700; }
 
 .add-mini-btn {
-  padding: 6px 16px;
-  border-radius: 10px;
+  padding: 10px 24px;
+  border-radius: 14px;
   border: 1px solid rgba(0,0,0,0.06);
   background: #fff;
   color: var(--primary-color);
-  font-weight: 700;
-  font-size: 13px;
+  font-weight: 800;
+  font-size: 18px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
-.add-mini-btn:hover {
-  background: var(--primary-color);
-  color: #fff;
-  border-color: var(--primary-color);
-}
 
 .waves-grid {
   padding: 0 24px;
@@ -364,18 +359,18 @@ function notifySchedule() {
 }
 
 .trash-zone {
-  margin: 20px 24px;
-  height: 56px;
-  border: 1px dashed rgba(214, 64, 64, 0.2);
-  border-radius: 12px;
+  margin: 32px;
+  height: 80px;
+  border: 2px dashed rgba(214, 64, 64, 0.2);
+  border-radius: 20px;
   background: rgba(214, 64, 64, 0.01);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   color: #d64040;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 800;
+  font-size: 20px;
   transition: all 0.3s;
   opacity: 0.6;
 }
@@ -385,13 +380,13 @@ function notifySchedule() {
   background: rgba(214, 64, 64, 0.05);
 }
 
-.trash-icon { width: 20px; height: 20px; }
+.trash-icon { width: 32px; height: 32px; }
 
 .foot-note {
-  margin: 24px 0;
+  margin: 48px 0;
   text-align: center;
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: 900;
+  font-size: 20px;
   color: var(--text-sub);
 }
 

@@ -22,7 +22,7 @@ body {
   background: #f0f4f2 url('/src/asset/image/bg.jpg') center/cover fixed no-repeat;
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  font-size: 15px;
+  font-size: 20px; /* 从 15px 增加到 20px */
 }
 
 .app {
@@ -32,7 +32,6 @@ body {
 
 /* Base Glass Class */
 .glass {
-  background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
   border: 1px solid var(--glass-border);
@@ -70,31 +69,31 @@ body {
 
 /* Global Component Fixes */
 .el-tag {
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  padding: 0 10px !important;
-  height: 28px !important;
-  line-height: 26px !important;
-  font-size: 13px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 4px 16px !important;
+  height: 38px !important;
+  line-height: 30px !important;
+  font-size: 16px !important;
   border: 1px solid rgba(0,0,0,0.05) !important;
 }
 
 .el-dialog {
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(20px) !important;
-  border-radius: 24px !important;
+  border-radius: 32px !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important;
   overflow: hidden;
 }
 
 .el-dialog__header {
-  padding: 24px 24px 10px !important;
+  padding: 32px 32px 16px !important;
   margin-right: 0 !important;
 }
 
 .el-dialog__title {
-  font-weight: 800 !important;
-  font-size: 20px !important;
+  font-weight: 900 !important;
+  font-size: 28px !important;
   color: var(--primary-color) !important;
 }
 
@@ -104,9 +103,9 @@ body {
 }
 
 .group-tree .el-tree-node__content {
-  height: 64px !important; /* 增加高度 */
-  border-radius: 18px !important;
-  margin: 6px 0 !important;
+  height: 80px !important; /* 增加到 80px */
+  border-radius: 22px !important;
+  margin: 10px 0 !important;
   border: 1px solid transparent !important;
 }
 

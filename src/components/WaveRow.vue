@@ -161,16 +161,16 @@ const displayTime = computed(() => {
 .wave-container {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(20px);
-  border-radius: 20px;
+  border-radius: 28px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
 }
 
 .wave-header {
-  padding: 12px 16px;
+  padding: 20px 28px;
   background: rgba(220, 235, 228, 0.4);
   display: flex;
   justify-content: space-between;
@@ -181,20 +181,21 @@ const displayTime = computed(() => {
 .title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 }
 
 .wave-name {
-  font-size: 18px;
+  font-size: 26px;
   font-weight: 800;
-  margin-right: 4px;
+  margin-right: 8px;
 }
 
 .wave-badge {
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  height: 24px !important;
-  padding: 0 8px !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  height: 34px !important;
+  padding: 0 14px !important;
+  font-size: 16px !important;
 }
 
 .mode-badge {
@@ -205,39 +206,39 @@ const displayTime = computed(() => {
 
 .boss-badge {
   border: none !important;
-  box-shadow: 0 2px 8px rgba(214, 64, 64, 0.2);
+  box-shadow: 0 4px 12px rgba(214, 64, 64, 0.2);
 }
 
 .meta-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 6px;
+  gap: 24px;
+  margin-top: 10px;
 }
 
 .wave-meta {
   color: var(--text-sub);
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .countdown-hint {
-  font-size: 11px;
+  font-size: 16px;
   color: #a87b2f;
   font-weight: 900;
 }
 
 .wave-actions {
   display: flex;
-  gap: 6px;
+  gap: 10px;
 }
 
 .mini-btn {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: #fff;
@@ -246,68 +247,62 @@ const displayTime = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   transition: 0.2s;
 }
 
-.mini-btn svg { width: 14px; height: 14px; }
+.mini-btn svg { width: 20px; height: 20px; }
 .mini-btn:hover { background: var(--primary-color); color: #fff; transform: scale(1.1); }
 .mini-btn.delete:hover { background: #ff4d4f; }
 
 .teams-grid {
-  padding: 16px 24px;
+  padding: 24px 32px;
   display: grid;
-  gap: 16px;
+  gap: 24px;
 }
 
 .team-card {
   background: rgba(255, 255, 255, 0.5);
-  padding: 12px 20px;
-  border-radius: 16px;
+  padding: 20px 28px;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 0.8);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 16px;
   min-width: 0;
 }
 
 .team-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .team-card::before {
   content: '';
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
+  top: 10px;
+  bottom: 10px;
+  width: 5px;
+  border-radius: 0 3px 3px 0;
 }
 
 .team-card.is-red::before { background: #ff4d4f; }
 .team-card.is-yellow::before { background: #faad14; }
 .team-card.is-green::before { background: #52c41a; }
 
-.team-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .team-dot {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: currentColor;
 }
 
 .team-name {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 900;
   color: var(--text-main);
 }

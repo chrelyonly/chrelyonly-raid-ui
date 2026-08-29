@@ -103,10 +103,10 @@ function onRoleClick(role) {
 
 <style scoped>
 .role-library {
-  padding: 20px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   height: calc(100vh - 48px);
   position: sticky;
   top: 24px;
@@ -115,7 +115,7 @@ function onRoleClick(role) {
 .library-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 }
 
 .header-main {
@@ -126,22 +126,24 @@ function onRoleClick(role) {
 
 .header-main h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 800;
   color: var(--primary-color);
 }
 
 .count-tag {
-  border-radius: 6px !important;
-  font-weight: 700 !important;
+  border-radius: 10px !important;
+  font-weight: 800 !important;
+  padding: 4px 12px !important;
+  height: 32px !important;
 }
 
 .search-input :deep(.el-input__wrapper) {
   background: rgba(0,0,0,0.03);
   box-shadow: none !important;
   border: 1px solid transparent;
-  border-radius: 10px;
-  height: 36px;
+  border-radius: 16px;
+  height: 54px;
   transition: all 0.3s;
 }
 
@@ -173,18 +175,18 @@ function onRoleClick(role) {
 
 /* 分组样式 */
 .group-label {
-  padding: 8px 0;
+  padding: 12px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 20px;
   color: var(--text-sub);
   font-weight: 700;
 }
 
 .group-label .dot {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   background: var(--primary-color);
   border-radius: 50%;
   opacity: 0.5;
@@ -192,28 +194,30 @@ function onRoleClick(role) {
 
 /* 用户标签 */
 .user-label {
-  padding: 4px 0;
+  padding: 8px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 12px;
+  font-size: 18px;
   color: var(--text-main);
   font-weight: 600;
 }
 
 .user-mini-avatar {
+  width: 28px;
+  height: 28px;
   border: 1px solid rgba(0,0,0,0.05);
 }
 
 /* 角色卡片：小型化 */
 .role-card {
   width: 100%;
-  height: 48px;
-  margin: 2px 0;
-  padding: 0 10px;
+  height: 72px;
+  margin: 4px 0;
+  padding: 0 16px;
   background: #fff;
   border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 10px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   cursor: grab;
@@ -224,12 +228,12 @@ function onRoleClick(role) {
 
 .role-card.is-c {
   background: rgba(255, 77, 79, 0.02);
-  border-left: 3px solid #ff4d4f;
+  border-left: 5px solid #ff4d4f;
 }
 
 .role-card.is-support {
   background: rgba(82, 196, 26, 0.02);
-  border-left: 3px solid #52c41a;
+  border-left: 5px solid #52c41a;
 }
 
 .role-card:hover {

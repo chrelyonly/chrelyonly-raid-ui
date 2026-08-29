@@ -62,7 +62,7 @@ function handleJobSelect(subJob) {
   <el-dialog
     :model-value="modelValue"
     title="✨ 添加新角色"
-    width="440px"
+    width="600px"
     destroy-on-close
     class="custom-dialog"
     :close-on-click-modal="false"

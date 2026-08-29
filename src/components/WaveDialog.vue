@@ -84,7 +84,7 @@ const disabledDate = (time) => {
   <el-dialog
     :model-value="modelValue"
     :title="isEdit ? '✨ 编辑攻坚计划' : '✨ 创建新波次'"
-    width="440px"
+    width="600px"
     destroy-on-close
     class="custom-dialog"
     :close-on-click-modal="false"

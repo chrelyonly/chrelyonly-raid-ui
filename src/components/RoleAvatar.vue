@@ -100,9 +100,9 @@ function getRoleTypeName(type) {
 
 .avatar-container {
   position: relative;
-  flex: 0 0 44px;
-  width: 44px;
-  height: 44px;
+  flex: 0 0 64px; /* 从 44px 增加到 64px */
+  width: 64px;
+  height: 64px;
 }
 
 .avatar, .avatar-img {
@@ -114,26 +114,25 @@ function getRoleTypeName(type) {
   justify-content: center;
   color: #fff;
   font-weight: 900;
-  font-size: 16px;
+  font-size: 24px; /* 增加字体 */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.8);
+  border: 3px solid rgba(255, 255, 255, 0.8);
   object-fit: cover;
 }
 
 .job-icon {
-  border-radius: 8px; /* 职业图标用方圆角 */
+  border-radius: 12px;
   background: #1a1a1a;
-  border-color: #d4af37; /* 金色边框 */
+  border-color: #d4af37;
 }
 
 .user-mini-overlay {
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid #fff;
+  width: 24px; /* 增加小头像尺寸 */
+  height: 24px;
+  border: 2px solid #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 2;
 }
@@ -143,14 +142,14 @@ function getRoleTypeName(type) {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 16px;
+  font-size: 22px; /* 从 16px 增加 */
   color: #081a15;
   font-weight: 900;
 }
@@ -158,37 +157,40 @@ function getRoleTypeName(type) {
 .detail-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .detail {
   color: #3d4d44;
-  font-size: 12px;
+  font-size: 16px; /* 从 12px 增加 */
   font-weight: 800;
 }
 
 .mini-tag {
-  height: 18px !important;
-  line-height: 16px !important;
-  font-size: 10px !important;
-  padding: 0 4px !important;
+  height: 24px !important;
+  line-height: 22px !important;
+  font-size: 14px !important;
+  padding: 0 8px !important;
 }
 
 /* Small size variant for compact wave grid */
+.small .avatar-container {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+}
+
 .small .avatar, .small .avatar-img {
-  flex: 0 0 32px;
-  width: 32px;
-  height: 32px;
-  font-size: 13px;
-  border-width: 1.5px;
+  font-size: 18px;
+  border-width: 2px;
 }
 
 .small .name {
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .small .detail {
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .small .role-info {
