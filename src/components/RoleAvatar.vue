@@ -44,31 +44,11 @@ function getRoleTypeName(type) {
         :src="`/image/jobs/${role.jobImage}`"
         alt="job"
       />
-      <img
-        v-else-if="role.avatar"
-        class="avatar-img"
-        :src="role.avatar"
-        alt="avatar"
-      />
-      <span
-        v-else
-        class="avatar"
-        :style="{ background: role.color || '#ccc' }"
-      >
-        {{ (role.name || '?').slice(0, 1) }}
-      </span>
-      <!-- 用户小头像，悬浮在角落 -->
-      <img
-        v-if="role.jobImage && role.avatar"
-        class="user-mini-overlay"
-        :src="role.avatar"
-      />
     </div>
     <div class="role-info">
       <b class="name">{{ role.name }}</b>
       <div class="detail-row" v-if="size !== 'small'">
         <small class="detail">
-          {{ role.job }}
           <span v-if="role.reputation">🔪· {{ role.reputation }}w</span>
           🍼· {{ role.damage }}
         </small>
@@ -79,8 +59,7 @@ function getRoleTypeName(type) {
       <div class="detail-row" v-else>
          <small class="detail">
            <span >{{ role.reputation }}w · </span>
-           {{role.type}}
-           <span v-if="role.type !== 3">🔪{{ role.damage }}</span>
+           <span v-if="role.type !== 3">🔪{{ role.damage }}E</span>
            <span v-else>🍼{{ role.damage }}</span>
 
          </small>
