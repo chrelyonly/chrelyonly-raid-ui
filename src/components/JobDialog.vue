@@ -1,5 +1,4 @@
 <script setup>
-import { ref, computed } from 'vue'
 import { JOBS_DATA } from '../constants/jobs'
 
 const props = defineProps({
@@ -7,9 +6,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:modelValue', 'select'])
-
-const activeBaseJobIndex = ref(0)
-const activeBaseJob = computed(() => JOBS_DATA[activeBaseJobIndex.value])
 
 function handleSelect(subJob) {
   emit('select', subJob)
@@ -25,7 +21,7 @@ function getImageUrl(name, type) {
   <el-dialog
     :model-value="modelValue"
     title="选择职业"
-    width="1100px"
+    width="1200px"
     class="job-picker-dialog"
     destroy-on-close
     :close-on-click-modal="false"
@@ -34,35 +30,25 @@ function getImageUrl(name, type) {
     @update:model-value="val => $emit('update:modelValue', val)"
   >
     <div class="job-picker-container">
-      <!-- Left: Base Jobs -->
-      <div class="base-jobs-list">
-        <div
-          v-for="(baseJob, index) in JOBS_DATA"
-          :key="baseJob.name"
-          class="base-job-item"
-          :class="{ active: activeBaseJobIndex === index }"
-          @click="activeBaseJobIndex = index"
-        >
-          <div class="icon-wrapper">
-            <img :src="getImageUrl(baseJob.icon, 'sub')" class="base-job-icon" />
-          </div>
-          <span class="base-job-name">{{ baseJob.name }}</span>
-        </div>
-      </div>
-
-      <!-- Right: Sub Jobs Grid -->
       <div class="sub-jobs-content">
-        <div class="sub-jobs-grid">
-          <div
-            v-for="subJob in activeBaseJob.subJobs"
-            :key="subJob.name"
-            class="sub-job-card"
-            @click="handleSelect(subJob)"
-          >
-            <div class="sub-job-image-wrapper">
-              <img :src="getImageUrl(subJob.image, 'jobs')" class="sub-job-image" />
-              <div class="sub-job-overlay">
-                <span class="sub-job-name">{{ subJob.name }}</span>
+        <div v-for="baseJob in JOBS_DATA" :key="baseJob.name" class="base-job-group">
+          <div class="base-job-header">
+            <img :src="getImageUrl(baseJob.icon, 'sub')" class="base-job-header-icon" />
+            <span class="base-job-header-name">{{ baseJob.name }}</span>
+            <div class="header-line"></div>
+          </div>
+          <div class="sub-jobs-grid">
+            <div
+              v-for="subJob in baseJob.subJobs"
+              :key="subJob.name"
+              class="sub-job-card"
+              @click="handleSelect(subJob)"
+            >
+              <div class="sub-job-image-wrapper">
+                <img :src="getImageUrl(subJob.image, 'jobs')" class="sub-job-image" />
+                <div class="sub-job-overlay">
+                  <span class="sub-job-name">{{ subJob.name }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -75,96 +61,53 @@ function getImageUrl(name, type) {
 <style scoped>
 .job-picker-container {
   display: flex;
-  height: 650px;
+  height: 70vh;
   background: #0f1112;
   color: #fff;
   overflow: hidden;
   font-family: "Microsoft YaHei", sans-serif;
 }
 
-.base-jobs-list {
-  width: 180px;
-  border-right: 1px solid #2d2f31;
-  overflow-y: auto;
-  padding: 10px 0;
-  background: #15181a;
-}
-
-.base-job-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px 5px;
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-}
-
-.base-job-item::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 0;
-  background: #d4af37;
-  transition: height 0.3s;
-}
-
-.base-job-item.active {
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.15) 100%);
-}
-
-.base-job-item.active::after {
-  height: 70%;
-}
-
-.icon-wrapper {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
-  border-radius: 50%;
-  margin-bottom: 4px;
-  transition: transform 0.3s;
-}
-
-.base-job-item.active .icon-wrapper {
-  transform: scale(1.1);
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
-}
-
-.base-job-icon {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
-}
-
-.base-job-name {
-  font-size: 13px;
-  color: #a0a0a0;
-  margin-top: 4px;
-}
-
-.base-job-item.active .base-job-name {
-  color: #d4af37;
-  font-weight: bold;
-}
-
 .sub-jobs-content {
   flex: 1;
-  padding: 20px;
+  padding: 20px 30px;
   overflow-y: auto;
   background: #0f1112;
 }
 
-.sub-jobs-grid {
+.base-job-group {
+  margin-bottom: 40px;
+}
+
+.base-job-header {
   display: flex;
-  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.base-job-header-icon {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
+}
+
+.base-job-header-name {
+  font-size: 18px;
+  color: #d4af37;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.header-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.5), transparent);
+}
+
+.sub-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px;
 }
 
@@ -248,3 +191,4 @@ function getImageUrl(name, type) {
   color: #d4af37;
 }
 </style>
+
