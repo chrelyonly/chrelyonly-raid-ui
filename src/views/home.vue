@@ -19,6 +19,7 @@ import WaveDialog from '../components/WaveDialog.vue'
  */
 const {
   roles,
+  groups,
   waves,
   getRole,
   assignedCount,
@@ -164,7 +165,7 @@ function notifySchedule() {
         </section>
 
         <!-- ==================== Role Tree ==================== -->
-        <RoleTree :roles="roles" @start-drag="startDrag" @end-drag="endDrag" />
+        <RoleTree :roles="roles" :groups="groups" @start-drag="startDrag" @end-drag="endDrag" />
       </div>
 
       <p class="foot-note">

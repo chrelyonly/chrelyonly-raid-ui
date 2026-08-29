@@ -23,17 +23,24 @@ function getRoleTagType(type) {
 
 <template>
   <div class="role-avatar-wrapper" :class="size">
+    <img
+      v-if="role.avatar"
+      class="avatar-img"
+      :src="role.avatar"
+      alt="avatar"
+    />
     <span
+      v-else
       class="avatar"
-      :style="{ background: role.color }"
+      :style="{ background: role.color || '#ccc' }"
     >
-      {{ role.name.slice(0, 1) }}
+      {{ (role.name || '?').slice(0, 1) }}
     </span>
     <div class="role-info">
       <b class="name">{{ role.name }}</b>
       <div class="detail-row" v-if="size !== 'small'">
         <small class="detail">{{ role.job }} · {{ role.damage }}</small>
-        <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag">
+        <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag" v-if="role.type">
           {{ role.type }}
         </el-tag>
       </div>
@@ -53,7 +60,7 @@ function getRoleTagType(type) {
   width: 100%;
 }
 
-.avatar {
+.avatar, .avatar-img {
   flex: 0 0 44px;
   width: 44px;
   height: 44px;
@@ -66,6 +73,7 @@ function getRoleTagType(type) {
   font-size: 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.8);
+  object-fit: cover;
 }
 
 .role-info {
@@ -105,7 +113,7 @@ function getRoleTagType(type) {
 }
 
 /* Small size variant for compact wave grid */
-.small .avatar {
+.small .avatar, .small .avatar-img {
   flex: 0 0 32px;
   width: 32px;
   height: 32px;

@@ -7,6 +7,10 @@ const props = defineProps({
   roles: {
     type: Array,
     required: true
+  },
+  groups: {
+    type: Array,
+    required: true
   }
 })
 
@@ -24,20 +28,8 @@ const filterNode = (value, data) => {
   return data.label.includes(value)
 }
 
-const groups = ref([])
-
-const loadData = () => {
-  let params = {
-
-  }
-
-  $https("/dnf-api/getUserInfo","get",params,1,{}).then( res=> {
-    groups.value = res.data.data
-  })
-}
-
-onMounted(()=>{
-  loadData()
+const totalMembers = computed(() => {
+  return props.groups.reduce((acc, group) => acc + (group.children?.length || 0), 0)
 })
 
 function onDragStart(role) {
@@ -50,7 +42,7 @@ function onDragStart(role) {
     <div class="library-header">
       <div class="header-main">
         <h2>角色库</h2>
-        <el-tag size="small" effect="plain" class="count-tag">{{ roles.length }}</el-tag>
+        <el-tag size="small" effect="plain" class="count-tag">{{ totalMembers }}</el-tag>
       </div>
       <el-input
         v-model="filterText"

@@ -1,17 +1,47 @@
-import { ref, computed } from 'vue'
-import { ElMessage } from 'element-plus'
+import {computed, ref} from 'vue'
+import {ElMessage} from 'element-plus'
 
 export function useRoster() {
-  const roles = ref([
-    { id: 1, name: '云上长安', job: '剑魂', type: '大C', position: '输出', damage: '7.28w', color: '#4b8cff' },
-    { id: 2, name: '阿拉德旅人', job: '旅人', type: '小C', position: '输出', damage: '6.92w', color: '#c78638' },
-    { id: 3, name: '神启·奶爸', job: '圣骑士', type: '辅助', position: '辅助', damage: '2.15w', color: '#b57bdf' },
-    { id: 4, name: '雾神的低语', job: '女气功', type: '大C', position: '输出', damage: '6.55w', color: '#d06577' },
-    { id: 5, name: '月下独酌', job: '缪斯', type: '辅助', position: '辅助', damage: '2.08w', color: '#e29058' },
-    { id: 6, name: '赤霄剑意', job: '剑帝', type: '小C', position: '输出', damage: '6.31w', color: '#e4573e' },
-    { id: 7, name: '念气环绕', job: '男气功', type: '混子', position: '输出', damage: '6.72w', color: '#3ba888' },
-    { id: 8, name: '炽天使', job: '女圣职', type: '辅助', position: '辅助', damage: '2.21w', color: '#cc74ba' },
-  ])
+  const roles = ref([])
+  const groups = ref([])
+
+  const loadRoles = async () => {
+    try {
+      const res = await window.$https("/dnf-api/getUserInfo", "get", {}, 1, {})
+
+      if (res.data) {
+        const allRoles = []
+        groups.value = res.data.map(group => ({
+          id: group.id,
+          label: group.name,
+          children: group.groupList.map(member => {
+            const role = {
+              id: member.UserName,
+              name: member.DisplayName || member.NickName,
+              avatar: member.SmallHeadImgUrl,
+              job: '群成员',
+              type: '',
+              position: '输出',
+              damage: member.NickName || 'DNF玩家',
+              color: '#4b8cff'
+            }
+            allRoles.push(role)
+            return {
+              id: member.UserName,
+              label: role.name,
+              role: role
+            }
+          })
+        }))
+        roles.value = allRoles
+      }
+    } catch (e) {
+      console.error('Failed to load roles', e)
+    }
+  }
+
+  // Load initially
+  loadRoles()
 
   const waves = ref([
     {
@@ -126,6 +156,7 @@ export function useRoster() {
 
   return {
     roles,
+    groups,
     waves,
     getRole,
     assignedCount,
