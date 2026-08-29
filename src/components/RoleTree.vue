@@ -28,8 +28,8 @@ const filterNode = (value, data) => {
   return data.label.includes(value)
 }
 
-const totalMembers = computed(() => {
-  return props.groups.reduce((acc, group) => acc + (group.children?.length || 0), 0)
+const totalRoles = computed(() => {
+  return props.roles.length
 })
 
 function onDragStart(role) {
@@ -42,7 +42,7 @@ function onDragStart(role) {
     <div class="library-header">
       <div class="header-main">
         <h2>角色库</h2>
-        <el-tag size="small" effect="plain" class="count-tag">{{ totalMembers }}</el-tag>
+        <el-tag size="small" effect="plain" class="count-tag">{{ totalRoles }}</el-tag>
         <el-button size="small" type="primary" plain @click="$emit('add-role')">添加角色</el-button>
       </div>
       <el-input
@@ -69,14 +69,20 @@ function onDragStart(role) {
             v-if="data.role"
             class="role-card"
             :class="{
-              'is-c': data.role.type.includes('C'),
-              'is-support': data.role.type === '辅助'
+              'is-c': data.role.type == 1,
+              'is-support': data.role.type == 2
             }"
             draggable="true"
             @dragstart="onDragStart(data.role)"
             @dragend="$emit('end-drag')"
           >
             <RoleAvatar :role="data.role" size="small" />
+          </div>
+
+          <!-- 用户节点 -->
+          <div v-else-if="data.isUser" class="user-label">
+            <el-avatar :size="20" :src="data.avatar" class="user-mini-avatar" />
+            <span>{{ node.label }}</span>
           </div>
 
           <!-- 分组节点 -->
@@ -177,6 +183,21 @@ function onDragStart(role) {
   background: var(--primary-color);
   border-radius: 50%;
   opacity: 0.5;
+}
+
+/* 用户标签 */
+.user-label {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.user-mini-avatar {
+  border: 1px solid rgba(0,0,0,0.05);
 }
 
 /* 角色卡片：小型化 */

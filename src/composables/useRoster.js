@@ -8,12 +8,14 @@ export function useRoster() {
 
   const loadData = async () => {
     try {
-      const res = await window.$https("/dnf-api/getGroupInfo", "get", {}, 1, {})
+      const res = await window.$https("/dnf-api/getUserInfo", "get", {}, 1, {})
       // 兼容两种返回格式
       const data = res.data.data || res.data
       if (data) {
         rawGroups.value = data
         const allUsers = []
+        const allRoles = []
+
         data.forEach(g => {
           if (g.groupList) {
             g.groupList.forEach(m => {
@@ -25,44 +27,62 @@ export function useRoster() {
                 groupId: g.id,
                 groupName: g.name
               })
+
+              // 提取该用户下的角色列表
+              if (m.userList && Array.isArray(m.userList)) {
+                m.userList.forEach(u => {
+                  allRoles.push({
+                    ...u,
+                    ownerId: m.UserName,
+                    // 适配显示逻辑：辅助显示奶量，输出显示伤害
+                    displayDamage: u.type === 2 ? (u.healing || '0') : (u.damage || '0')
+                  })
+                })
+              }
             })
           }
         })
+
         users.value = allUsers
+        roles.value = allRoles
       }
     } catch (e) {
-      console.error('Failed to load users', e)
+      console.error('Failed to load roster data', e)
     }
   }
 
   // 计算树形结构：群组 -> 用户 -> 角色
   const groups = computed(() => {
     return rawGroups.value.map(rg => {
-      const groupRoles = []
+      const memberNodes = []
       if (rg.groupList) {
-        rg.groupList.forEach(user => {
-          const userRoles = roles.value.filter(r => r.ownerId === user.UserName)
-          if (userRoles.length > 0) {
-            groupRoles.push({
-              id: user.UserName,
-              label: user.DisplayName || user.NickName,
-              isUser: true,
-              children: userRoles.map(r => ({
-                id: r.id,
-                label: r.name,
-                role: r
-              }))
-            })
-          }
+        rg.groupList.forEach(member => {
+          const memberRoles = roles.value.filter(r => r.ownerId === member.UserName)
+
+          memberNodes.push({
+            id: member.UserName,
+            label: member.DisplayName || member.NickName,
+            isUser: true,
+            avatar: member.SmallHeadImgUrl,
+            children: memberRoles.map(r => ({
+              id: r.id,
+              label: r.name,
+              role: {
+                ...r,
+                avatar: member.SmallHeadImgUrl, // 角色头像跟随用户
+                damage: r.displayDamage || r.damage // 确保显示正确的数值
+              }
+            }))
+          })
         })
       }
 
       return {
         id: rg.id,
         label: rg.name,
-        children: groupRoles
+        children: memberNodes
       }
-    }).filter(g => g.children.length > 0)
+    })
   })
 
   // 初始化加载
@@ -84,7 +104,18 @@ export function useRoster() {
 
   const roleMap = computed(() => new Map(roles.value.map(role => [role.id, role])))
 
-  const getRole = (id) => roleMap.value.get(id)
+  const getRole = (id) => {
+    const role = roleMap.value.get(id)
+    if (!role) return null
+
+    // 额外处理一下头像，因为 role 本身可能没存头像，需要从用户那里拿
+    const owner = users.value.find(u => u.userName === role.ownerId)
+    return {
+      ...role,
+      avatar: owner ? owner.avatar : role.avatar,
+      damage: role.displayDamage || role.damage
+    }
+  }
 
   const assignedIds = computed(() => {
     const ids = new Set()
@@ -167,11 +198,28 @@ export function useRoster() {
   }
 
   const addRole = async (roleData) => {
-    const res = await window.$https("/dnf-api/addRole", "post", roleData, 2, {})
-    // 兼容两种返回格式
-    const data = res.data
-    roles.value.push(data)
-    ElMessage.success(`✅ 角色「${data.userName}」已添加`)
+    try {
+      // 将前端定义的类型转回后端数值 (1输出 2辅助)
+      const submitData = {
+        ...roleData,
+        type: roleData.type === '辅助' ? 2 : 1,
+        // 如果是辅助，damage 输入的是亿，或者已经在 RoleDialog 处理过了
+      }
+
+      const res = await window.$https("/dnf-api/addRole", "post", submitData, 2, {})
+      const newRole = res.data.data || res.data
+
+      if (newRole) {
+        roles.value.push({
+          ...newRole,
+          ownerId: roleData.ownerId,
+          displayDamage: newRole.type === 2 ? (newRole.healing || '0') : (newRole.damage || '0')
+        })
+        ElMessage.success(`✅ 角色「${newRole.name}」已添加`)
+      }
+    } catch (e) {
+      ElMessage.error('添加角色失败')
+    }
   }
 
   return {

@@ -13,11 +13,19 @@ defineProps({
 function getRoleTagType(type) {
   const map = {
     辅助: 'success',
+    2: 'success',
     大C: 'danger',
+    1: 'danger',
     小C: 'warning',
     混子: 'info',
   }
   return map[type] || 'info'
+}
+
+function getRoleTypeName(type) {
+  if (type === 1) return '输出'
+  if (type === 2) return '辅助'
+  return type
 }
 </script>
 
@@ -41,17 +49,17 @@ function getRoleTagType(type) {
       <div class="detail-row" v-if="size !== 'small'">
         <small class="detail">
           {{ role.job }}
-          <span v-if="role.reputation">· {{ role.reputation }}w</span>
-          · {{ role.damage }}
+          <span v-if="role.reputation">🔪· {{ role.reputation }}w</span>
+          🍼· {{ role.damage }}
         </small>
         <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag" v-if="role.type">
-          {{ role.type }}
+          {{ getRoleTypeName(role.type) }}
         </el-tag>
       </div>
       <div class="detail-row" v-else>
          <small class="detail">
            <span v-if="role.reputation">{{ role.reputation }}w · </span>
-           {{ role.damage }}
+           🔪{{ role.damage }}
          </small>
       </div>
     </div>

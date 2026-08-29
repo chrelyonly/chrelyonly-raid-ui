@@ -92,21 +92,21 @@ function handleSubmit() {
 
       <el-form-item label="角色定位">
         <el-radio-group v-model="form.type">
-          <el-radio-button label="大C" value="1" />
-          <el-radio-button label="小C" value="2"  />
-          <el-radio-button label="辅助" value="3"  />
-          <el-radio-button label="混子" value="4"  />
+          <el-radio-button label="大C" :value="1" />
+          <el-radio-button label="小C" :value="2"  />
+          <el-radio-button label="辅助" :value="3"  />
+          <el-radio-button label="混子" :value="4"  />
         </el-radio-group>
       </el-form-item>
 
       <el-form-item label="名望">
-        <el-input v-model="form.reputation" placeholder="例如：12.5" :value="12.5" type="number" step="0.1">
+        <el-input v-model="form.reputation" placeholder="例如：12.5" type="number" step="0.1">
           <template #append>万</template>
         </el-input>
       </el-form-item>
 
       <el-form-item v-if="form.type !== '3'" label="伤害">
-        <el-input v-model="form.damage" placeholder="模拟"  :value="3000" type="number" step="0.1">
+        <el-input v-model="form.damage" placeholder="模拟" type="number" step="0.1">
           <template #append>亿</template>
         </el-input>
       </el-form-item>
