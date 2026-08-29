@@ -26,12 +26,12 @@ export default defineConfig({
     // },
     // port: 2888,
     proxy: {
-      '/api/v1': {
-        target: 'http://chrelyonly.cn:8000',
+      '/api': {
+        target: 'http://127.0.0.1:8080',
         // target: 'https://music-app.chrelyonly.cn/api/',
         changeOrigin: true,
         ws: true,
-        // rewrite: path => path.replace(/^\/api/, ''),
+        rewrite: path => path.replace(/^\/api/, ''),
       },
     },
   },

@@ -16,24 +16,24 @@ export function useRoster() {
   const waves = ref([
     {
       id: 1,
-      name: '第一波',
+      name: '第 1 波',
       mode: '4人周本',
       time: '20:00',
       boss: '雾神·雨',
       place: '雾神尼',
       teams: [
-        { id: '1-1', name: '小队 1', members: [1, 2, 7, 3] }
+        { id: '1-1', name: '红队', members: [1, 2, 7, 3] }
       ]
     },
     {
       id: 2,
-      name: '第二波',
+      name: '第 2 波',
       mode: '4人周本',
       time: '21:30',
       boss: '雾神·雨',
       place: '雾神尼',
       teams: [
-        { id: '2-1', name: '小队 1', members: [4, 6, null, 5] }
+        { id: '2-1', name: '红队', members: [4, 6, null, 5] }
       ]
     },
   ])
@@ -69,7 +69,7 @@ export function useRoster() {
     if (index !== -1) {
       const waveName = waves.value[index].name
       waves.value.splice(index, 1)
-      ElMessage.success(`${waveName} 已删除`)
+      ElMessage.success(`${waveName} 🗑️ 已删除`)
     }
   }
 
@@ -79,22 +79,23 @@ export function useRoster() {
 
     // Initialize teams based on mode
     const teamCount = waveData.mode === '12人团本' ? 3 : 1
+    const teamNames = ['红队', '黄队', '绿队']
     const teams = []
     for (let i = 1; i <= teamCount; i++) {
       teams.push({
         id: `${newId}-${i}`,
-        name: `小队 ${i}`,
+        name: teamNames[i - 1],
         members: [null, null, null, null]
       })
     }
 
     waves.value.push({
       id: newId,
-      name: `第${waves.value.length + 1}波`,
+      name: `第 ${waves.value.length + 1} 波`,
       ...waveData,
       teams
     })
-    ElMessage.success('攻坚队创建成功')
+    ElMessage.success('🎉 攻坚队创建成功')
   }
 
   const updateWave = (waveId, waveData) => {
@@ -105,11 +106,12 @@ export function useRoster() {
       // If mode changed, we might need to reset teams
       if (currentWave.mode !== waveData.mode) {
         const teamCount = waveData.mode === '12人团本' ? 3 : 1
+        const teamNames = ['红队', '黄队', '绿队']
         const teams = []
         for (let i = 1; i <= teamCount; i++) {
           teams.push({
             id: `${waveId}-${i}`,
-            name: `小队 ${i}`,
+            name: teamNames[i - 1],
             members: [null, null, null, null]
           })
         }
@@ -118,7 +120,7 @@ export function useRoster() {
         waves.value[index] = { ...currentWave, ...waveData }
       }
 
-      ElMessage.success('更新成功')
+      ElMessage.success('✅ 更新成功')
     }
   }
 

@@ -79,7 +79,7 @@ function removeRoleFromWave(team, index) {
   const role = getRole(roleId)
   team.members[index] = null
   if (role) {
-    ElMessage.success(`「${role.name}」已从${team.name}中移出`)
+    ElMessage.success(`👋 「${role.name}」已从 ${team.name} 中移出`)
   }
 }
 
@@ -93,31 +93,35 @@ function notifySchedule() {
     <section class="main">
       <!-- ==================== Header ==================== -->
       <header class="header">
-        <div>
-          <div class="crumb">RAID SCHEDULE / 2026.08.29</div>
-          <h1>团本排班表</h1>
+        <div class="title-group">
+          <div class="crumb">
+             <span class="emoji">📅</span>
+             <span class="text-gradient-gold">RAID SCHEDULE / 2026.08.29</span>
+          </div>
+          <h1 class="main-title">
+             <span class="text-gradient-primary">团本排班表</span>
+             <span class="emoji">⚔️</span>
+          </h1>
         </div>
         <div class="header-right">
-          <el-tag effect="dark" type="warning">本周 · 雾神攻坚战</el-tag>
-          <button class="create" type="button" @click="openCreateDialog">
-            <CirclePlus style="width: 16px; height: 16px;" /> 新建攻坚队
-          </button>
-          <button class="notify" type="button" @click="notifySchedule">
-            <Bell style="width: 16px; height: 16px;" /> 发送通知
+          <button class="action-btn" type="button" @click="openCreateDialog">
+            <span class="emoji">✨</span>
+            <span>新建波次</span>
           </button>
         </div>
       </header>
 
       <!-- ==================== Summary ==================== -->
       <div class="glass summary">
-        <div>
-          <b>本周攻坚计划</b>
-          <span>共 {{ waves.length }} 波 · {{ assignedCount }} / {{ roles.length }} 个角色已编排</span>
-        </div>
-        <div class="chips">
-          <el-tag type="info">时间 20:00 起</el-tag>
-          <el-tag type="success">地点 雾神尼</el-tag>
-          <el-tag type="danger">Boss 雾神·雨</el-tag>
+        <div class="summary-info">
+          <div class="summary-title">
+            <span class="emoji">📋</span>
+            <b class="text-gradient-primary">本周攻坚计划</b>
+          </div>
+          <span class="summary-sub">
+            <span class="emoji">🚀</span> 共 {{ waves.length }} 波 ·
+            <span class="emoji">👤</span> {{ assignedCount }} / {{ roles.length }} 角色
+          </span>
         </div>
       </div>
 
@@ -126,14 +130,18 @@ function notifySchedule() {
         <!-- ==================== Schedule ==================== -->
         <section class="glass schedule">
           <div class="schedule-title">
-            <div>
+            <div class="title-with-emoji">
+              <span class="emoji">🛡️</span>
               <h2>波次排班</h2>
-              <span>每波 4 人 · 拖动角色调整位置</span>
+              <span class="sub-hint"><span class="emoji">👥</span> 拖动角色调整位置</span>
             </div>
+            <button class="add-mini-btn" @click="openCreateDialog">
+               <span class="emoji">➕</span> 添加波次
+            </button>
           </div>
 
-          <!-- 波次列表 -->
-          <div class="waves-list">
+          <!-- 波次列表：紧凑网格布局 -->
+          <div class="waves-grid">
             <WaveRow
               v-for="wave in waves"
               :key="wave.id"
@@ -148,16 +156,10 @@ function notifySchedule() {
             />
           </div>
 
-          <!-- 添加波次 -->
-          <button class="add-row" type="button" @click="openCreateDialog">＋ 添加下一波</button>
-
           <!-- 删除区域 -->
           <div class="trash-zone" @dragover.prevent @drop="dropDelete">
-            <Delete style="width: 20px; height: 20px;" />
-            <div>
-              <b>拖到这里删除角色</b>
-              <span>将已排班角色拖到此处即可移出排班</span>
-            </div>
+             <Delete class="trash-icon" />
+             <span><span class="emoji">💡</span> 拖到此处移出排班</span>
           </div>
         </section>
 
@@ -166,7 +168,7 @@ function notifySchedule() {
       </div>
 
       <p class="foot-note">
-        输出角色放入前两位，辅助角色放入后两位；已排班角色可直接拖到下方删除区域。
+        <span class="emoji">📝</span> 输出前三，辅助最后；角色可跨队交换。
       </p>
     </section>
 
@@ -183,45 +185,41 @@ function notifySchedule() {
 <style scoped>
 .app {
   min-height: 100vh;
-  padding: 28px;
-  box-sizing: border-box;
+  padding: 24px;
 }
 
 .main {
-  max-width: 1700px;
   margin: 0 auto;
-}
-
-.glass {
-  background: #ffffffb8;
-  border: 1px solid #ffffffd1;
-  box-shadow: 0 14px 35px rgba(73, 96, 82, 0.09);
-  backdrop-filter: blur(14px);
-  border-radius: 12px;
 }
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 20px;
   margin-bottom: 24px;
 }
 
-.crumb {
-  font-size: 13px;
-  letter-spacing: 2px;
-  color: #9b8965;
-  margin-bottom: 8px;
-  font-weight: 600;
+.title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 42px;
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 800;
-  color: #143e33;
-  letter-spacing: 2px;
+}
+
+.main-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 36px;
+  line-height: 1;
 }
 
 .header-right {
@@ -230,175 +228,156 @@ function notifySchedule() {
   gap: 12px;
 }
 
-.header-right button {
+.action-btn {
   height: 44px;
-  border: 0;
-  border-radius: 8px;
-  padding: 0 20px;
-  display: inline-flex;
+  padding: 0 24px;
+  border-radius: 22px;
+  border: none;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.create {
-  background: #245044;
+  font-weight: 800;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(26, 77, 64, 0.15);
+  background: var(--primary-color);
   color: #fff;
 }
 
-.create:hover {
-  background: #2d6354;
-  transform: translateY(-1px);
+.action-btn:hover {
+  transform: translateY(-2px);
+  background: var(--primary-light);
+  box-shadow: 0 8px 25px rgba(26, 77, 64, 0.25);
 }
 
-.notify {
-  background: #d9aa4f;
-  color: #25342f;
+.action-btn:active {
+  transform: translateY(0);
 }
 
-.notify:hover {
-  background: #e5b965;
-  transform: translateY(-1px);
+.action-btn .emoji {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.action-btn:hover .emoji {
+  transform: scale(1.2) rotate(10deg);
 }
 
 .summary {
-  min-height: 80px;
-  padding: 24px 30px;
-  box-sizing: border-box;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
-.summary > div:first-child {
+.summary-title {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
 }
 
-.summary b {
-  font-size: 20px;
-  color: #18382f;
+.summary b { font-size: 24px; }
+.summary-sub { font-size: 16px; font-weight: 800; color: var(--text-sub); display: flex; align-items: center; gap: 6px; }
+
+.title-with-emoji {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.summary span {
-  color: #829087;
+.sub-hint {
   font-size: 14px;
-  margin-top: 4px;
-}
-
-.chips {
-  display: flex;
-  gap: 10px;
+  color: var(--text-sub);
+  font-weight: 800;
+  margin-left: 10px;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 26px;
-  align-items: start;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
 }
 
 .schedule {
-  padding: 0;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
   overflow: hidden;
 }
 
 .schedule-title {
-  padding: 22px 25px;
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.schedule-title h2 {
-  margin: 0;
-  font-size: 24px;
-  color: #143e33;
-}
+.schedule-title h2 { margin: 0; font-size: 22px; font-weight: 900; }
+.schedule-title span { font-size: 13px; color: var(--text-sub); font-weight: 700; }
 
-.schedule-title span {
-  color: #8a958d;
+.add-mini-btn {
+  padding: 6px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: #fff;
+  color: var(--primary-color);
+  font-weight: 700;
   font-size: 13px;
-}
-
-.waves-list {
-  padding: 20px;
-}
-
-.add-row {
-  width: calc(100% - 48px);
-  height: 55px;
-  margin: 15px 24px;
-  border: 2px dashed #dce5df;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.4);
-  color: #a08048;
-  font-size: 15px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.add-row:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: #c7ad79;
-  color: #8a6d3b;
+.add-mini-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+
+.waves-grid {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .trash-zone {
-  margin: 10px 24px 24px;
-  height: 80px;
-  border: 2px dashed #f8dcd8;
+  margin: 20px 24px;
+  height: 56px;
+  border: 1px dashed rgba(214, 64, 64, 0.2);
   border-radius: 12px;
-  background: #fff8f7;
+  background: rgba(214, 64, 64, 0.01);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #8b2d27;
+  color: #d64040;
+  font-weight: 600;
+  font-size: 13px;
   transition: all 0.3s;
+  opacity: 0.6;
 }
 
 .trash-zone:hover {
-  border-color: #e6a2a2;
-  background: #fef0f0;
+  opacity: 1;
+  background: rgba(214, 64, 64, 0.05);
 }
 
-.trash-zone div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.trash-zone b {
-  font-size: 14px;
-}
-
-.trash-zone span {
-  font-size: 12px;
-  opacity: 0.8;
-}
+.trash-icon { width: 20px; height: 20px; }
 
 .foot-note {
-  margin: 24px 4px 0;
-  color: #839087;
-  font-size: 14px;
+  margin: 24px 0;
   text-align: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-sub);
 }
 
-@media (max-width: 1250px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr) 300px;
-  }
-}
-
-@media (max-width: 1050px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+  .waves-grid { grid-template-columns: 1fr; }
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import {ref, watch, computed, onMounted} from 'vue'
 import RoleAvatar from './RoleAvatar.vue'
+import { Search } from '@element-plus/icons-vue'
 
 const props = defineProps({
   roles: {
@@ -11,42 +12,33 @@ const props = defineProps({
 
 const emit = defineEmits(['start-drag', 'end-drag'])
 
-const groups = computed(() => [
-  {
-    label: '阿拉德群',
-    children: [
-      {
-        label: '团长·苍穹',
-        children: props.roles.slice(0, 4).map(role => ({
-          id: role.id,
-          label: `${role.name} · ${role.job}`,
-          role,
-        })),
-      },
-      {
-        label: '奶妈小队',
-        children: props.roles.slice(4).map(role => ({
-          id: role.id,
-          label: `${role.name} · ${role.job}`,
-          role,
-        })),
-      },
-    ],
-  },
-  {
-    label: '固定团二群',
-    children: [
-      {
-        label: '晚间团',
-        children: props.roles.slice(2, 6).map(role => ({
-          id: role.id,
-          label: `${role.name} · ${role.job}`,
-          role,
-        })),
-      },
-    ],
-  },
-])
+const filterText = ref('')
+const treeRef = ref(null)
+
+watch(filterText, (val) => {
+  treeRef.value?.filter(val)
+})
+
+const filterNode = (value, data) => {
+  if (!value) return true
+  return data.label.includes(value)
+}
+
+const groups = ref([])
+
+const loadData = () => {
+  let params = {
+
+  }
+
+  $https("/dnf-api/getUserInfo","get",params,1,{}).then( res=> {
+    groups.value = res.data.data
+  })
+}
+
+onMounted(()=>{
+  loadData()
+})
 
 function onDragStart(role) {
   emit('start-drag', role)
@@ -54,106 +46,188 @@ function onDragStart(role) {
 </script>
 
 <template>
-  <aside class="glass members">
-    <div class="member-title">
-      <div>
+  <aside class="glass role-library">
+    <div class="library-header">
+      <div class="header-main">
         <h2>角色库</h2>
-        <span>从群分组获取角色</span>
+        <el-tag size="small" effect="plain" class="count-tag">{{ roles.length }}</el-tag>
       </div>
-      <el-tag>{{ roles.length }} 人</el-tag>
+      <el-input
+        v-model="filterText"
+        placeholder="搜索角色名或职业..."
+        :prefix-icon="Search"
+        clearable
+        class="search-input"
+      />
     </div>
 
-    <el-tree
-      :data="groups"
-      node-key="id"
-      default-expand-all
-      class="group-tree"
-    >
-      <template #default="{ node, data }">
-        <!-- 角色节点 -->
-        <div
-          v-if="data.role"
-          class="tree-role"
-          draggable="true"
-          @dragstart="onDragStart(data.role)"
-          @dragend="$emit('end-drag')"
-        >
-          <RoleAvatar :role="data.role" size="small" />
-        </div>
+    <div class="tree-container">
+      <el-tree
+        ref="treeRef"
+        :data="groups"
+        node-key="id"
+        default-expand-all
+        :filter-node-method="filterNode"
+        class="group-tree"
+      >
+        <template #default="{ node, data }">
+          <!-- 角色节点 -->
+          <div
+            v-if="data.role"
+            class="role-card"
+            :class="{
+              'is-c': data.role.type.includes('C'),
+              'is-support': data.role.type === '辅助'
+            }"
+            draggable="true"
+            @dragstart="onDragStart(data.role)"
+            @dragend="$emit('end-drag')"
+          >
+            <RoleAvatar :role="data.role" size="small" />
+          </div>
 
-        <!-- 分组节点 -->
-        <div v-else class="tree-group">
-          <span>{{ node.label }}</span>
-        </div>
-      </template>
-    </el-tree>
+          <!-- 分组节点 -->
+          <div v-else class="group-label">
+            <span class="dot"></span>
+            <span>{{ node.label }}</span>
+          </div>
+        </template>
+      </el-tree>
+    </div>
   </aside>
 </template>
 
 <style scoped>
-.glass {
-  background: #ffffffb8;
-  border: 1px solid #ffffffd1;
-  box-shadow: 0 14px 35px rgba(73, 96, 82, 0.09);
-  backdrop-filter: blur(14px);
-  border-radius: 12px;
-}
-
-.members {
-  padding: 23px;
-  min-height: 500px;
-}
-
-.member-title {
+.role-library {
+  padding: 20px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100vh - 48px);
+  position: sticky;
+  top: 24px;
+}
+
+.library-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header-main {
+  display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
 }
 
-.member-title h2 {
+.header-main h2 {
   margin: 0;
-  font-size: 22px;
-  color: #143e33;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-color);
 }
 
-.member-title span {
-  color: #8a958d;
-  font-size: 13px;
+.count-tag {
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+}
+
+.search-input :deep(.el-input__wrapper) {
+  background: rgba(0,0,0,0.03);
+  box-shadow: none !important;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  height: 36px;
+  transition: all 0.3s;
+}
+
+.search-input :deep(.el-input__wrapper.is-focus) {
+  background: #fff;
+  border-color: var(--primary-color);
+}
+
+.tree-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-right: -10px;
+  padding-right: 10px;
 }
 
 .group-tree {
-  background: transparent;
-  color: #23332e;
+  background: transparent !important;
 }
 
 .group-tree :deep(.el-tree-node__content) {
-  height: 48px;
-  border-radius: 10px;
-  margin-bottom: 4px;
+  height: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
 }
 
 .group-tree :deep(.el-tree-node__content:hover) {
-  background: #eaf2ed;
+  background: transparent !important;
 }
 
-.tree-group {
+/* 分组样式 */
+.group-label {
+  padding: 8px 0;
   display: flex;
   align-items: center;
+  gap: 8px;
   font-size: 14px;
-  color: #728078;
-  font-weight: 600;
+  color: var(--text-sub);
+  font-weight: 700;
 }
 
-.tree-role {
+.group-label .dot {
+  width: 4px;
+  height: 4px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+/* 角色卡片：小型化 */
+.role-card {
   width: 100%;
+  height: 48px;
+  margin: 2px 0;
+  padding: 0 10px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   cursor: grab;
-  user-select: none;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
-.tree-role:active {
+.role-card.is-c {
+  background: rgba(255, 77, 79, 0.02);
+  border-left: 3px solid #ff4d4f;
+}
+
+.role-card.is-support {
+  background: rgba(82, 196, 26, 0.02);
+  border-left: 3px solid #52c41a;
+}
+
+.role-card:hover {
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.role-card.is-c:hover { border-color: #ff4d4f; }
+.role-card.is-support:hover { border-color: #52c41a; }
+
+.role-card:active {
   cursor: grabbing;
+}
+
+/* 隐藏树的默认缩进线条或增加间距 */
+.group-tree :deep(.el-tree-node__children) {
+  padding-left: 16px;
 }
 </style>

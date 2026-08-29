@@ -7,15 +7,15 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
 
   const startDrag = (role) => {
     draggedRoleId.value = role.id
-    draggedSource.value = 'role'
+    draggedSource.value = { type: 'role' }
   }
 
   const startAssignedDrag = (roleId, team, index) => {
     draggedRoleId.value = roleId
     draggedSource.value = {
       type: 'assigned',
-      teamId: team.id,
-      index,
+      team: team, // 存储团队引用
+      index: index,
     }
   }
 
@@ -30,32 +30,58 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
     const role = getRole(draggedRoleId.value)
     if (!role) return
 
-    // DNF Standard: 3 DPS (0, 1, 2) + 1 Buffer (3)
-    const targetPosition = index < 3 ? '输出' : '辅助'
+    // 1. 目标位置职能校验 (3 DPS + 1 Buffer)
+    const targetPositionRequirement = index < 3 ? '输出' : '辅助'
     const rolePosition = role.position || (role.type === '辅助' ? '辅助' : '输出')
 
-    if (rolePosition !== targetPosition) {
-      ElMessage.warning(`「${role.name}」属于${rolePosition}，不能放入${targetPosition}位置`)
+    if (rolePosition !== targetPositionRequirement) {
+      ElMessage.warning(`⚠️ 「${role.name}」是${rolePosition}，不能放入${targetPositionRequirement}位哦`)
       endDrag()
       return
     }
 
-    // Role Swapping Logic
-    const oldRoleId = team.members[index]
-
-    // If it's the same role at same position, do nothing
-    if (oldRoleId === role.id) {
+    const oldRoleIdAtTarget = team.members[index]
+    if (oldRoleIdAtTarget === role.id) {
       endDrag()
       return
     }
 
-    // Remove from previous position if it exists in ANY team in ANY wave
-    removeRoleFromAllWaves(role.id)
+    // 2. 执行逻辑：区分 [从库拖入] 和 [位置交换]
+    if (draggedSource.value && draggedSource.value.type === 'assigned') {
+      const sourceTeam = draggedSource.value.team
+      const sourceIndex = draggedSource.value.index
 
-    // Assign to new position
-    team.members[index] = role.id
+      if (oldRoleIdAtTarget) {
+        // --- 真正的交换逻辑 ---
+        const roleAtTarget = getRole(oldRoleIdAtTarget)
+        const sourcePositionRequirement = sourceIndex < 3 ? '输出' : '辅助'
+        const roleAtTargetPos = roleAtTarget.position || (roleAtTarget.type === '辅助' ? '辅助' : '输出')
 
-    ElMessage.success(`「${role.name}」已加入${team.name}`)
+        // 也要校验被换的人能不能去出发地
+        if (roleAtTargetPos === sourcePositionRequirement) {
+          // 双向奔赴，完美对调
+          sourceTeam.members[sourceIndex] = oldRoleIdAtTarget
+          team.members[index] = role.id
+          ElMessage.success(`🔄 「${role.name}」与「${roleAtTarget.name}」已互换位置`)
+        } else {
+          // 被换的人去不了出发地，则被挤回角色库
+          sourceTeam.members[sourceIndex] = null
+          team.members[index] = role.id
+          ElMessage.success(`✨ 「${role.name}」已就位，原成员已移回角色库`)
+        }
+      } else {
+        // 只是单纯移动到空位
+        sourceTeam.members[sourceIndex] = null
+        team.members[index] = role.id
+        ElMessage.success(`🚚 「${role.name}」已移动到新位置`)
+      }
+    } else {
+      // 从左侧角色库拖入
+      removeRoleFromAllWaves(role.id)
+      team.members[index] = role.id
+      ElMessage.success(`✨ 「${role.name}」已加入 ${team.name} 🎉`)
+    }
+
     endDrag()
   }
 
@@ -64,7 +90,7 @@ export function useDragAndDrop(getRole, removeRoleFromAllWaves) {
     const role = getRole(draggedRoleId.value)
     removeRoleFromAllWaves(draggedRoleId.value)
     if (role) {
-      ElMessage.success(`「${role.name}」已移出排班`)
+      ElMessage.success(`👋 「${role.name}」已从排班表中撤离`)
     }
     endDrag()
   }

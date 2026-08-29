@@ -31,10 +31,15 @@ function getRoleTagType(type) {
     </span>
     <div class="role-info">
       <b class="name">{{ role.name }}</b>
-      <small class="detail">{{ role.job }} · {{ role.damage }}</small>
-      <el-tag size="small" :type="getRoleTagType(role.type)">
-        {{ role.type }}
-      </el-tag>
+      <div class="detail-row" v-if="size !== 'small'">
+        <small class="detail">{{ role.job }} · {{ role.damage }}</small>
+        <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag">
+          {{ role.type }}
+        </el-tag>
+      </div>
+      <div class="detail-row" v-else>
+         <small class="detail">{{ role.damage }}</small>
+      </div>
     </div>
   </div>
 </template>
@@ -43,23 +48,24 @@ function getRoleTagType(type) {
 .role-avatar-wrapper {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 12px;
   min-width: 0;
   width: 100%;
 }
 
 .avatar {
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%; /* 圆形更可爱 */
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 900;
+  font-size: 16px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.8);
 }
 
 .role-info {
@@ -74,28 +80,48 @@ function getRoleTagType(type) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 14px;
-  color: #18382f; /* 同步 style.css 的文字颜色 */
+  font-size: 16px;
+  color: #081a15;
+  font-weight: 900;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .detail {
-  color: #839087;
-  font-size: 11px;
+  color: #3d4d44;
+  font-size: 12px;
+  font-weight: 800;
 }
 
-/* Small size variant for tree */
+.mini-tag {
+  height: 18px !important;
+  line-height: 16px !important;
+  font-size: 10px !important;
+  padding: 0 4px !important;
+}
+
+/* Small size variant for compact wave grid */
 .small .avatar {
   flex: 0 0 32px;
   width: 32px;
   height: 32px;
-  font-size: 12px;
+  font-size: 13px;
+  border-width: 1.5px;
 }
 
 .small .name {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .small .detail {
   font-size: 10px;
+}
+
+.small .role-info {
+  gap: 0;
 }
 </style>
