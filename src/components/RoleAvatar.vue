@@ -97,10 +97,6 @@ function handleDelete() {
 
 <style scoped>
 .role-avatar-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
   width: 100%;
 }
 

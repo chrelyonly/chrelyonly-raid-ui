@@ -391,10 +391,8 @@ const deleteRow = (row) => {
 }
 
 .team-card {
-  background: rgba(255, 255, 255, 0.5);
-  padding: 20px 28px;
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.4);
+  padding: 5px 10px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -464,7 +462,6 @@ const deleteRow = (row) => {
   min-height: 86px; /* 进一步增加高度以容纳顶部标签 */
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 12px;
   display: flex;
   flex-direction: column; /* 改为垂直布局 */
   align-items: flex-start;
