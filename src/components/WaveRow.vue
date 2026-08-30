@@ -59,7 +59,8 @@ const modeName = computed(() => {
 })
 
 const gridStyle = computed(() => {
-  const count = props.wave.teams?.length || 1
+  // const count = props.wave.teams?.length || 1
+  const count = 1
   return {
     '--team-count': count
   }
