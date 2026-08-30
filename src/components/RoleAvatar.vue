@@ -42,15 +42,15 @@ function getRoleTypeName(type) {
 function handleDelete() {
   console.log(props.role)
   ElMessageBox.confirm(
-    `确定要永久删除角色「${props.role.name}」吗？`,
-    '风险操作确认',
-    {
-      confirmButtonText: '确定删除',
-      cancelButtonText: '手滑了',
-      type: 'warning',
-      buttonSize: 'default',
-      confirmButtonClass: 'el-button--danger'
-    }
+      `确定要永久删除角色「${props.role.name}」吗？`,
+      '风险操作确认',
+      {
+        confirmButtonText: '确定删除',
+        cancelButtonText: '手滑了',
+        type: 'warning',
+        buttonSize: 'default',
+        confirmButtonClass: 'el-button--danger'
+      }
   ).then(() => {
     emit('delete')
   }).catch(() => {})
@@ -61,10 +61,10 @@ function handleDelete() {
   <div class="role-avatar-wrapper" :class="size">
     <div class="avatar-container">
       <img
-        v-if="role.jobImage"
-        class="avatar-img job-icon"
-        :src="`/image/jobs/${role.jobImage}`"
-        alt="job"
+          v-if="role.jobImage"
+          class="avatar-img job-icon"
+          :src="`/image/jobs/${role.jobImage}`"
+          alt="job"
       />
     </div>
     <div class="role-info">
@@ -80,14 +80,14 @@ function handleDelete() {
           {{ getRoleTypeName(role.type) }}
         </el-tag>
       </div>
-<!--      <div class="detail-row" >-->
-<!--         <small class="detail">-->
-<!--           <span >{{ role.reputation }} </span>-->
-<!--           <span v-if="role.type !== 3">🔪{{ role.damage }}E</span>-->
-<!--           <span v-else>🍼{{ role.damage }}</span>-->
+      <!--      <div class="detail-row" >-->
+      <!--         <small class="detail">-->
+      <!--           <span >{{ role.reputation }} </span>-->
+      <!--           <span v-if="role.type !== 3">🔪{{ role.damage }}E</span>-->
+      <!--           <span v-else>🍼{{ role.damage }}</span>-->
 
-<!--         </small>-->
-<!--      </div>-->
+      <!--         </small>-->
+      <!--      </div>-->
     </div>
     <div v-if="showDelete" class="delete-action" @click.stop="handleDelete">
       <el-icon class="delete-btn-icon"><Delete /></el-icon>
@@ -97,6 +97,10 @@ function handleDelete() {
 
 <style scoped>
 .role-avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
   width: 100%;
 }
 
