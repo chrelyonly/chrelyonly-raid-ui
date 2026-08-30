@@ -60,6 +60,7 @@ export const JOBS_DATA = [
       { name: '枪炮师', image: 'launcher_female.png' },
       { name: '机械师', image: 'mechanic_female.png' },
       { name: '弹药专家', image: 'spitfire_female.png' },
+      { name: '协战师', image: 'paramedic.png' },
     ]
   },
   {
@@ -100,7 +101,7 @@ export const JOBS_DATA = [
     subJobs: [
       { name: '圣骑士', image: 'crusader_female.png' },
       { name: '异端审判者', image: 'inquistor.png' },
-      { name: '巫女', image: 'empty.png' },
+      { name: '巫女', image: 'sorceress.png' },
       { name: '诱魔者', image: 'mistress.png' },
       { name: '蓝拳圣使(女)', image: 'infighter_female.png' },
     ]
@@ -153,6 +154,14 @@ export const JOBS_DATA = [
       { name: '旅人', image: 'traveler.png' },
       { name: '猎人', image: 'hunter.png' },
       { name: '妖护使', image: 'vigilante.png' },
+      { name: '奇美拉', image: 'chimera.png' },
+    ]
+  },
+  {
+    name: '帝国骑士',
+    icon: 'imperialknight.png',
+    subJobs: [
+      { name: '破浪者', image: 'breaker.png' },
     ]
   },
   {

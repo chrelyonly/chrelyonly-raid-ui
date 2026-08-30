@@ -87,6 +87,7 @@ export function useRoster() {
             id: member.UserName,
             label: member.DisplayName || member.NickName,
             isUser: true,
+            dnfOwner: member.dnfOwner,
             avatar: member.SmallHeadImgUrl,
             userColor: color,
             children: memberRoles.map(r => ({

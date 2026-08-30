@@ -21,29 +21,26 @@ const emit = defineEmits(['delete'])
 
 function getRoleTagType(type) {
   const map = {
-    '辅助': 'success',
     '3': 'success',
-    3: 'success',
-    '大C': 'danger',
     '1': 'danger',
-    1: 'danger',
-    '小C': 'warning',
     '2': 'warning',
-    2: 'warning',
-    '混子': 'info',
     '4': 'info',
-    4: 'info'
   }
   return map[type] || 'info'
 }
 
 function getRoleTypeName(type) {
-  if (type == 1 || type == 2 || type == 4) return '输出'
-  if (type == 3) return '辅助'
-  return type
+  const map = {
+    '1': '大C',
+    '2': '小C',
+    '3': '辅助',
+    '4': '混子',
+  }
+  return map[type] || '未知'
 }
 
 function handleDelete() {
+  console.log(props.role)
   ElMessageBox.confirm(
     `确定要永久删除角色「${props.role.name}」吗？`,
     '风险操作确认',
@@ -71,24 +68,26 @@ function handleDelete() {
       />
     </div>
     <div class="role-info">
-      <b class="name">{{ role.name }}</b>
-      <div class="detail-row" v-if="size !== 'small'">
+      <b class="name" style="font-size: 15px;">{{ role.name }}</b>
+      <b style="font-size: 12px">{{role.job}}</b>
+      <div class="detail-row">
         <small class="detail">
-          <span v-if="role.reputation">🔪· {{ role.reputation }}w</span>
-          🍼· {{ role.damage }}
+          <span v-if="role.reputation" style="font-size: 10px">名望：{{ role.reputation }}</span>
+          <span v-if="role.damage && role.damage !=='--'" style="font-size: 10px">伤害：{{ role.damage }}</span>
+          <span v-if="role.healing && role.healing !=='--'" style="font-size: 10px">奶量：{{ role.healing }}</span>
         </small>
         <el-tag size="small" :type="getRoleTagType(role.type)" class="mini-tag" v-if="role.type">
           {{ getRoleTypeName(role.type) }}
         </el-tag>
       </div>
-      <div class="detail-row" v-else>
-         <small class="detail">
-           <span >{{ role.reputation }}w · </span>
-           <span v-if="role.type !== 3">🔪{{ role.damage }}E</span>
-           <span v-else>🍼{{ role.damage }}</span>
+<!--      <div class="detail-row" >-->
+<!--         <small class="detail">-->
+<!--           <span >{{ role.reputation }} </span>-->
+<!--           <span v-if="role.type !== 3">🔪{{ role.damage }}E</span>-->
+<!--           <span v-else>🍼{{ role.damage }}</span>-->
 
-         </small>
-      </div>
+<!--         </small>-->
+<!--      </div>-->
     </div>
     <div v-if="showDelete" class="delete-action" @click.stop="handleDelete">
       <el-icon class="delete-btn-icon"><Delete /></el-icon>

@@ -2,6 +2,7 @@
 import {ref, watch, computed, onMounted} from 'vue'
 import RoleAvatar from './RoleAvatar.vue'
 import { Search, Refresh, Plus } from '@element-plus/icons-vue'
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const props = defineProps({
   roles: {
@@ -52,6 +53,33 @@ function onRoleClick(role) {
 function onDeleteRole(role) {
   emit('delete-role', role)
 }
+
+const copyText = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    // 复制成功的提示（如使用 Element Plus 的 ElMessage）
+    ElMessage.success('复制成功')
+  } catch (err) {
+    ElMessage.error('复制失败:', err)
+  }
+}
+const bindHelpId = (data) => {
+  ElMessageBox.prompt('输入助手id', '提示')
+      .then(({ value }) => {
+        let params = {
+          helpId: value,
+          ownerId: data.id,
+        }
+        $https("/dnf-api/bindHelpId","post",params,2,{}).then((res) => {
+          ElMessage({
+            type: 'success',
+            message: res.msg,
+          })
+        }).finally(() => {
+          emit('refresh')
+        })
+      })
+}
 </script>
 
 <template>
@@ -96,7 +124,6 @@ function onDeleteRole(role) {
         ref="treeRef"
         :data="groups"
         node-key="id"
-        default-expand-all
         :filter-node-method="filterNode"
         class="group-tree"
       >
@@ -123,7 +150,7 @@ function onDeleteRole(role) {
           </div>
 
           <!-- 用户节点 -->
-          <div v-else-if="data.isUser" class="user-label">
+          <div v-else-if="data.isUser" class="user-label" style="position:relative;">
             <el-avatar :size="20" :src="data.avatar" class="user-mini-avatar" />
             <span
               class="user-tag"
@@ -131,6 +158,8 @@ function onDeleteRole(role) {
             >
               {{ node.label }}
             </span>
+            <span style="font-size: 12px;color: #707070;position: absolute;top: -10px;left: 100px" @click.stop="copyText('999999')" v-if="data.dnfOwner">助手ID：{{data.dnfOwner.helpId}},名称：{{data.dnfOwner.nickName}}</span>
+            <span style="font-size: 12px;color: #707070;position: absolute;top: -10px" @click.stop="bindHelpId(data)" >编辑助手id</span>
           </div>
 
           <!-- 分组节点 -->
