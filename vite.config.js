@@ -27,8 +27,8 @@ export default defineConfig({
     // port: 2888,
     proxy: {
       '/api': {
-        // target: 'http://127.0.0.1:8080',
-        target: 'https://dnf-raid.chrelyonly.cn/api',
+        target: 'http://127.0.0.1:8080',
+        // target: 'https://dnf-raid.chrelyonly.cn/api',
         changeOrigin: true,
         ws: true,
         rewrite: path => path.replace(/^\/api/, ''),

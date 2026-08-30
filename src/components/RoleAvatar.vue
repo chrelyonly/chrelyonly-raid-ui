@@ -25,22 +25,32 @@ const emit = defineEmits(['delete'])
 const visible = ref(false)
 
 // 你的接口返回数据 (直接传入你的 res.data)
-const roleData = ref({
-  "wear": [ /* ...接口返回的 wear 数组... */ ],
-  "core": { /* ...接口返回的 core 对象... */ },
-  "fight": { /* ...接口返回的 fight 对象... */ }
-})
+const roleData = ref({})
 
 const openModal = () => {
   visible.value = true
 }
 // 打开详情弹窗
 const openDetail = (data) => {
-  console.log(data)
-  if (data.detailInfo){
-    roleData.value = JSON.parse(data.detailInfo)
-    openModal()
-  }else{
+  if (data.detailInfo || data.detailV2Info) {
+    try {
+      // 1. 安全解析两个 JSON 字符串
+      const detailObj = data.detailInfo ? JSON.parse(data.detailInfo) : {}
+      const detailV2Obj = data.detailV2Info ? JSON.parse(data.detailV2Info) : {}
+
+      // 2. 合并对象（优先保留 V2 里的同名新字段，若 V2 属性覆盖了 V1 的对象，可使用深合并）
+      roleData.value = {
+        ...detailObj,
+        ...detailV2Obj
+      }
+
+      debugger
+      openModal()
+    } catch (error) {
+      console.error("解析装备数据失败:", error)
+      ElMessage.error("数据格式异常，无法解析")
+    }
+  } else {
     ElMessage.error("缺少装备信息")
   }
 }
