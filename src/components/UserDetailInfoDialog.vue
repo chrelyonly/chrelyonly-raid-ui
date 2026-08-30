@@ -18,10 +18,10 @@ const emit = defineEmits(['update:modelValue'])
 const characterInfo = computed(() => props.data?.core?.jumpUrl?.param || {})
 const fameInfo = computed(() => props.data?.fight || {})
 
-// 核心属性列表（直接读取数据中的 list，不强行硬编码没有的属性）
+// 核心属性列表
 const attrList = computed(() => props.data?.core?.list || [])
 
-// 提取所有穿戴物品（包含基础装备与装扮/光环等）
+// 提取所有穿戴物品
 const allWearList = computed(() => props.data?.wear || [])
 
 // 匹配具体槽位的辅助函数
@@ -51,12 +51,23 @@ const rightEquipSlots = computed(() => [
   { pos: '耳环', data: getEquipByPos('耳环') }
 ])
 
-// 中间下方：称号、宠物、光环（包含“光环装扮”或“光环幻化装扮”）
+// 中间：核心特殊槽（称号、宠物、光环）
 const bottomEquipSlots = computed(() => [
   { pos: '称号', data: getEquipByPos('称号') },
   { pos: '宠物', data: getEquipByPos('宠物') },
   { pos: '光环', data: getEquipByPos(['光环装扮', '光环幻化装扮', '光环']) }
 ])
+
+// 额外装扮/时装槽位（武器装扮、皮肤装扮、武器幻化等）
+const avatarSlots = computed(() => {
+  // 排除掉已经展示在左右两侧和核心三槽中的装备
+  const usedPos = [
+    '头肩', '上衣', '下装', '腰带', '鞋', '鞋子',
+    '武器', '项链', '手镯', '戒指', '辅助装备', '魔法石', '耳环',
+    '称号', '宠物', '光环装扮', '光环幻化装扮', '光环'
+  ]
+  return allWearList.value.filter(item => !usedPos.includes(item.posName))
+})
 
 // 品质颜色映射（根据 colorName / colorType）
 const getColorStyle = (item) => {
@@ -78,7 +89,7 @@ const handleClose = () => {
   <el-dialog
       :model-value="modelValue"
       title="角色详情"
-      width="820px"
+      width="1200px"
       destroy-on-close
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -133,6 +144,7 @@ const handleClose = () => {
           <div class="character-preview">
             <img :src="characterInfo.roleIcon" class="large-avatar" alt="role" />
           </div>
+
           <div class="bottom-slots">
             <div
                 v-for="(slot, idx) in bottomEquipSlots"
@@ -145,6 +157,23 @@ const handleClose = () => {
               </div>
               <div class="icon-box empty-box" v-else></div>
               <span class="bottom-pos-label">{{ slot.pos }}</span>
+            </div>
+          </div>
+
+          <div class="avatar-section" v-if="avatarSlots.length">
+            <div class="avatar-title">装扮/外观</div>
+            <div class="avatar-grid">
+              <div
+                  v-for="(item, idx) in avatarSlots"
+                  :key="idx"
+                  class="avatar-slot-item"
+                  :title="`${item.posName}: ${item.name}`"
+              >
+                <div class="icon-box mini" :style="getColorStyle(item)">
+                  <img :src="item.icon" :alt="item.name" />
+                </div>
+                <span class="avatar-pos-label">{{ item.posName }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -178,8 +207,6 @@ const handleClose = () => {
         </div>
       </div>
 
-
-      {{attrList}}
       <div class="bottom-attr-panel" v-if="attrList.length">
         <div class="panel-header">核心属性</div>
         <div class="attr-grid">
@@ -197,8 +224,8 @@ const handleClose = () => {
 .dnf-board {
   background: #11151c;
   border: 1px solid #2c3648;
-  padding: 16px;
-  border-radius: 6px;
+  padding: 24px;
+  border-radius: 8px;
   color: #d1d5db;
   font-family: Arial, sans-serif;
   user-select: none;
@@ -210,76 +237,84 @@ const handleClose = () => {
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(90deg, #182030 0%, #11151c 100%);
-  padding: 10px 16px;
-  border-radius: 4px;
+  padding: 15px 24px;
+  border-radius: 6px;
   border-bottom: 1px solid #232c3d;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 .role-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
 }
-.role-name { font-size: 18px; font-weight: bold; color: #fff; }
-.server, .level { font-size: 12px; background: #222d42; color: #8da4c4; padding: 2px 8px; border-radius: 4px; }
-.fame-meta { display: flex; align-items: center; gap: 6px; }
-.fame-icon { width: 20px; height: 20px; }
-.fame-tag { color: #9ca3af; font-size: 13px; }
-.fame-val { color: #ffb400; font-size: 16px; font-weight: bold; }
+.role-name { font-size: 27px; font-weight: bold; color: #fff; }
+.server, .level { font-size: 18px; background: #222d42; color: #8da4c4; padding: 3px 12px; border-radius: 6px; }
+.fame-meta { display: flex; align-items: center; gap: 9px; }
+.fame-icon { width: 30px; height: 30px; }
+.fame-tag { color: #9ca3af; font-size: 20px; }
+.fame-val { color: #ffb400; font-size: 24px; font-weight: bold; }
 
 /* 主装备区域布局 */
 .equip-main-layout {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
-  gap: 12px;
+  gap: 18px;
 }
 
 .equip-column {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 /* 装备槽位结构 */
 .equip-item-slot {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   background: #171d27;
-  padding: 6px 10px;
-  border-radius: 4px;
+  padding: 9px 15px;
+  border-radius: 6px;
   border: 1px solid #232c3d;
-  height: 48px;
+  height: 72px;
   box-sizing: border-box;
 }
 .equip-item-slot.reverse {
   justify-content: flex-end;
 }
 
-/* 图标样式 */
+/* 图标基础样式 */
 .icon-box {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 54px;
+  height: 54px;
   border: 1px solid #444;
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.icon-box img { width: 28px; height: 28px; }
+.icon-box img { width: 42px; height: 42px; }
+.icon-box.mini {
+  width: 44px;
+  height: 44px;
+}
+.icon-box.mini img {
+  width: 34px;
+  height: 34px;
+}
 .empty-box { background: #0e1218; border-color: #222a38; }
 
 .badge {
   position: absolute;
-  top: -4px;
-  right: -2px;
-  font-size: 11px;
+  top: -6px;
+  right: -3px;
+  font-size: 16px;
   font-weight: bold;
-  text-shadow: 0 0 4px #000;
+  text-shadow: 0 0 6px #000;
 }
 
 /* 装备文案 */
@@ -291,25 +326,25 @@ const handleClose = () => {
 }
 .equip-detail.align-right { text-align: right; }
 .equip-name {
-  font-size: 12px;
+  font-size: 18px;
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.pos-label { font-size: 11px; color: #6b7280; }
+.pos-label { font-size: 16px; color: #6b7280; }
 
-/* 中间区域（立绘 + 称号宠物光环） */
+/* 中间区域（立绘 + 称号宠物光环 + 装扮） */
 .center-col {
-  width: 180px;
+  width: 320px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   background: #151a23;
   border: 1px solid #232c3d;
-  border-radius: 4px;
-  padding: 12px 8px;
+  border-radius: 6px;
+  padding: 18px 12px;
 }
 .character-preview {
   display: flex;
@@ -318,67 +353,104 @@ const handleClose = () => {
   margin-top: 10px;
 }
 .large-avatar {
-  width: 100px;
-  height: 100px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 3px solid #ffb400;
-  box-shadow: 0 0 15px rgba(255, 180, 0, 0.2);
+  border: 4px solid #ffb400;
+  box-shadow: 0 0 22px rgba(255, 180, 0, 0.2);
 }
 .bottom-slots {
   display: flex;
-  gap: 12px;
+  gap: 18px;
   justify-content: center;
   width: 100%;
+  margin-top: 15px;
 }
 .bottom-slot-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 6px;
+}
+.bottom-pos-label { font-size: 15px; color: #6b7280; }
+
+/* 装扮/时装栏 */
+.avatar-section {
+  width: 100%;
+  margin-top: 15px;
+  border-top: 1px dashed #232c3d;
+  padding-top: 12px;
+}
+.avatar-title {
+  font-size: 15px;
+  color: #ffb400;
+  text-align: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.avatar-slot-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 4px;
 }
-.bottom-pos-label { font-size: 10px; color: #6b7280; }
+.avatar-pos-label {
+  font-size: 12px;
+  color: #6b7280;
+  max-width: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* 底部面板：属性展示 */
 .bottom-attr-panel {
-  margin-top: 16px;
+  margin-top: 24px;
   background: #171d27;
   border: 1px solid #232c3d;
-  border-radius: 4px;
-  padding: 12px;
+  border-radius: 6px;
+  padding: 18px;
 }
 .panel-header {
-  font-size: 13px;
+  font-size: 20px;
   font-weight: bold;
   color: #ffb400;
-  margin-bottom: 8px;
-  border-left: 3px solid #ffb400;
-  padding-left: 6px;
+  margin-bottom: 12px;
+  border-left: 4px solid #ffb400;
+  padding-left: 9px;
 }
 .attr-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px 16px;
+  gap: 12px 24px;
 }
 .attr-cell {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 18px;
 }
 .attr-label { color: #8da4c4; }
 .attr-val { color: #00f0ff; font-weight: bold; }
 </style>
 
 <style>
-/* Element Plus 弹窗主题重置 */
+/* Element Plus 弹窗主题重置与标题放大 */
 .dnf-dialog-wrapper .el-dialog {
   background-color: #11151c !important;
   border: 1px solid #2a354b;
 }
 .dnf-dialog-wrapper .el-dialog__title {
-  color: #ffffff !important;
+  font-size: 22px !important;
 }
 .dnf-dialog-wrapper .el-dialog__header {
   border-bottom: 1px solid #222d42;
   margin-right: 0;
+  padding: 20px 24px 15px !important;
 }
 </style>
