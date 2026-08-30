@@ -1,6 +1,8 @@
 <script setup>
 import { Delete } from '@element-plus/icons-vue'
-import { ElMessageBox } from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
+import UserDetailInfoDialog from "@/components/UserDetailInfoDialog.vue";
+import {ref} from "vue";
 
 const props = defineProps({
   role: {
@@ -18,6 +20,31 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['delete'])
+
+// 控制弹窗显隐
+const visible = ref(false)
+
+// 你的接口返回数据 (直接传入你的 res.data)
+const roleData = ref({
+  "wear": [ /* ...接口返回的 wear 数组... */ ],
+  "core": { /* ...接口返回的 core 对象... */ },
+  "fight": { /* ...接口返回的 fight 对象... */ }
+})
+
+const openModal = () => {
+  visible.value = true
+}
+// 打开详情弹窗
+const openDetail = (data) => {
+  console.log(data)
+  if (data.detailInfo){
+    roleData.value = JSON.parse(data.detailInfo)
+    openModal()
+  }else{
+    ElMessage.error("缺少装备信息")
+  }
+}
+
 
 function getRoleTagType(type) {
   const map = {
@@ -59,6 +86,9 @@ function handleDelete() {
 
 <template>
   <div class="role-avatar-wrapper" :class="size">
+    <div @click.stop="openDetail(role)">
+      <el-icon class="delete-btn-icon"><View /></el-icon>
+    </div>
     <div class="avatar-container">
       <img
           v-if="role.jobImage"
@@ -68,6 +98,7 @@ function handleDelete() {
       />
     </div>
     <div class="role-info">
+
       <b class="name" style="font-size: 15px;">{{ role.name }}</b>
       <b style="font-size: 12px">{{role.job}}</b>
       <div class="detail-row">
@@ -93,6 +124,10 @@ function handleDelete() {
       <el-icon class="delete-btn-icon"><Delete /></el-icon>
     </div>
   </div>
+  <UserDetailInfoDialog
+      v-model="visible"
+      :data="roleData"
+  />
 </template>
 
 <style scoped>
