@@ -158,7 +158,7 @@ const bindHelpId = (data) => {
             >
               {{ node.label }}
             </span>
-            <span style="font-size: 12px;color: #707070;position: absolute;top: -10px;left: 100px" @click.stop="copyText('999999')" v-if="data.dnfOwner">助手ID：{{data.dnfOwner.helpId}},名称：{{data.dnfOwner.nickName}}</span>
+            <span style="font-size: 12px;color: #707070;position: absolute;top: -10px;left: 70px" @click.stop="copyText('999999')" v-if="data.dnfOwner">助手ID：{{data.dnfOwner.helpId}},名称：{{data.dnfOwner.nickName}}</span>
             <span style="font-size: 12px;color: #707070;position: absolute;top: -10px" @click.stop="bindHelpId(data)" >编辑助手id</span>
           </div>
 

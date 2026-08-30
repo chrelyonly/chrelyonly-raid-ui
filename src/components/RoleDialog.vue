@@ -40,7 +40,7 @@ function handleSubmit() {
   if (!form.ownerId || !form.name || !form.job) {
     return ElMessage.warning('请填写所属用户、角色名称和职业')
   }
-
+  return ElMessage.warning('已关闭手动添加')
   emit('submit', {
     ...form,
   })
